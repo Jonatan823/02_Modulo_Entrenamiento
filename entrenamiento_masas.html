@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>S.L.E.R. - Motor Oficial Blindado v2</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+background:#cbd5e1;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+font-family:'Consolas', monospace;
+margin:0;
+overflow-y:auto; /* 🔓 PERMITE SCROLL */
+}
+
+#barra{
+height:60px;
+background:#0f172a;
+display:flex;
+border-bottom:3px solid #000;
+}
+
+.tramo{
+flex:1;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+color:#94a3b8;
+font-weight:900;
+font-size:11px;
+}
+
+select{
+width:80%;
+background:#1e293b;
+color:#fff;
+border:1px solid #ffc107;
+border-radius:4px;
+padding:2px;
+}
+
+.workspace{
+flex:1;
+padding:20px;
+display:flex;
+}
+
+.monitor{
+flex:1;
+background:#64748b;
+border-radius:12px;
+padding:25px;
+}
+
+#render{
+background:#fff;
+width:100%;
+padding:40px;
+font-size:22px;
+font-weight:700;
+line-height:1.9;
+border-radius:8px;
+display:none;
+}
+
+.linea{
+white-space:pre;
+margin-bottom:6px;
+}
+
+.impar{text-align:left;}
+.par{text-align:right;color:#1e40af;}
+
+.controles{
+background:#475569;
+padding:20px;
+display:flex;
+justify-content:center;
+gap:40px;
+border-top:3px solid #1e293b;
+position:sticky;
+bottom:0;
+}
+
+#reloj{
+font-size:48px;
+font-weight:900;
+background:#000;
+color:#ffc107;
+padding:0 30px;
+border-radius:10px;
+border:4px solid #0f172a;
+}
+
+button{
+width:320px;
+height:70px;
+border-radius:10px;
+font-size:26px;
+font-weight:900;
+cursor:pointer;
+border:none;
+color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div id="barra">
+<div class="tramo">
+NIVEL 3
+<select id="nivel3" onchange="cargar(this.value)"></select>
+</div>
+
+<div class="tramo">
+NIVEL 4
+<select id="nivel4" onchange="cargar(this.value)"></select>
+</div>
+</div>
+
+<div class="workspace">
+<div class="monitor">
+<div id="render"></div>
+<div id="placeholder" class="text-white text-4xl font-black opacity-30">
+SLER SYSTEM READY
+</div>
+</div>
+</div>
+
+<div class="controles">
+<div id="reloj">00:00:00</div>
+<button id="btn" class="bg-green-600" onclick="control()">START</button>
+</div>
+
+<script>
+
+const MAX_CARACTERES = 100;
+
+let ejercicio = 0;
+let estado = "start";
+let segundos = 0;
+let cronometro;
+
+const texto92 = `
+El sistema de lectura y escritura recíproco es una tecnología desarrollada para optimizar la captura semántica del cerebro humano,
+al eliminar el movimiento sacádico se logra fluidez visual, reduciendo el esfuerzo ocular y estabilizando la percepción global.
+La estructura en zig zag respeta la fisiología ocular, permitiendo mayor velocidad, menor fatiga cognitiva y mejor integración hemisférica.
+Cada bloque se transforma en una unidad integrada, la comprensión se vuelve instantánea, holística y profundamente estructural.
+El entrenamiento consolida el campo visual completo, genera estabilidad neurológica, precisión atencional y coherencia perceptiva.
+Esta metodología no solo reorganiza la lectura, sino que reconfigura la experiencia cognitiva, ampliando la capacidad de procesamiento simultáneo,
+optimizando la percepción sintética y fortaleciendo la continuidad semántica.
+El ejercicio noventa y dos representa la consolidación total del sistema, una página completa, estable, homogénea y sin fragmentación estructural.
+`;
+
+function dividirPalabra(palabra, espacio){
+if(palabra.length < 4) return null;
+if(espacio < 3) return null;
+let corte = Math.min(espacio - 1, palabra.length - 2);
+if(corte < 2) return null;
+return { parte: palabra.substring(0, corte) + "-", resto: palabra.substring(corte) };
+}
+
+/* 🔁 Corrige coma para renglones pares */
+function invertirConComas(linea){
+
+let palabras = linea.split(" ");
+
+palabras = palabras.map(p=>{
+if(p.endsWith(",")){
+return "," + p.slice(0,-1);
+}
+return p;
+});
+
+return palabras.reverse().join(" ");
+}
+
+function motor(texto){
+
+let palabras = texto.trim().split(/\s+/);
+let salida = "";
+let par = false;
+
+while(palabras.length > 0){
+
+let linea = "";
+
+while(palabras.length > 0 &&
+(linea.length + palabras[0].length + 1) <= MAX_CARACTERES){
+linea += (linea ? " " : "") + palabras.shift();
+}
+
+if(palabras.length > 0){
+let espacio = MAX_CARACTERES - linea.length;
+let division = dividirPalabra(palabras[0], espacio);
+if(division){
+linea += (linea ? " " : "") + division.parte;
+palabras[0] = division.resto;
+}
+}
+
+if(par){
+let invertida = invertirConComas(linea);
+salida += `<div class="linea par">${invertida}</div>`;
+}else{
+salida += `<div class="linea impar">${linea}</div>`;
+}
+
+par = !par;
+}
+
+return salida;
+}
+
+function cargar(val){
+ejercicio=parseInt(val);
+reset();
+document.getElementById("render").style.display="none";
+document.getElementById("placeholder").style.display="block";
+document.getElementById("placeholder").innerText="EJ. "+ejercicio+" LISTO";
+}
+
+function control(){
+if(ejercicio===0) return;
+
+const btn=document.getElementById("btn");
+const render=document.getElementById("render");
+const ph=document.getElementById("placeholder");
+
+if(estado==="start"){
+estado="stop";
+btn.innerText="STOP";
+btn.className="bg-red-600";
+ph.style.display="none";
+render.style.display="block";
+
+render.innerHTML = motor(texto92);
+
+cronometro=setInterval(()=>{
+segundos++;
+actualizar();
+},1000);
+
+}else{
+estado="start";
+clearInterval(cronometro);
+btn.innerText="START";
+btn.className="bg-green-600";
+}
+}
+
+function actualizar(){
+let s=segundos%60;
+let m=Math.floor(segundos/60);
+document.getElementById("reloj").innerText=
+`00:${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
+}
+
+function reset(){
+clearInterval(cronometro);
+segundos=0;
+estado="start";
+document.getElementById("reloj").innerText="00:00:00";
+document.getElementById("btn").innerText="START";
+document.getElementById("btn").className="bg-green-600";
+}
+
+window.onload=()=>{
+let n4=document.getElementById("nivel4");
+n4.innerHTML='<option disabled selected>...</option>';
+let o=document.createElement("option");
+o.value=92;
+o.innerText="Ej. 92";
+n4.appendChild(o);
+};
+
+</script>
+</body>
+</html>

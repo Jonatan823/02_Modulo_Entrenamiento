@@ -1,0 +1,13 @@
+[
+  { "id": 1, "p": "CASA", "s": ["CA", "SA"] },
+  { "id": 2, "p": "MESA", "s": ["ME", "SA"] },
+  { "id": 3, "p": "PERRO", "s": ["PE", "RRO"] },
+  { "id": 4, "p": "GATO", "s": ["GA", "TO"] },
+  { "id": 5, "p": "LUNA", "s": ["LU", "NA"] },
+  { "id": 6, "p": "CAMINO", "s": ["CA", "MI", "NO"] },
+  { "id": 7, "p": "PELOTA", "s": ["PE", "LO", "TA"] },
+  { "id": 8, "p": "ESTRELLA", "s": ["ES", "TRE", "LLA"] },
+  { "id": 9, "p": "MADERA", "s": ["MA", "DE", "RA"] },
+  { "id": 10, "p": "COMIDA", "s": ["CO", "MI", "DA"] },
+  { "id": 11, "p": "ESPEJO", "s": ["ES", "PE", "JO"] }
+]

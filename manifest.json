@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "SLER - Sistema de Lectura y Escritura Recíproco",
+  "version": "1.0.0",
+  "description": "Entrenamiento de agilidad y barrido visual progresivo SLER.",
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "icon.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.firebaseio.com/*",
+    "https://*.googleapis.com/*"
+  ]
+}

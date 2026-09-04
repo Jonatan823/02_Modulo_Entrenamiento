@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Migración de Ejercicios a Firestore</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white p-10 font-sans">
+  <div class="max-w-xl mx-auto bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-2xl">
+    <h1 class="text-2xl font-bold mb-4 text-emerald-400">Migrador de Ejercicios SLER</h1>
+    <p class="text-slate-300 text-sm mb-6">Presiona el botón para subir el ejercicio 88 a Firestore.</p>
+    
+    <button id="btn-migrar" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 px-6 rounded-lg uppercase tracking-wider transition">
+      Iniciar Migración (Ej. 88)
+    </button>
+
+    <div id="log" class="mt-6 p-4 bg-slate-950 rounded border border-slate-800 text-xs font-mono text-emerald-400 h-48 overflow-y-auto">
+      Esperando orden de migración...
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA1VUXm-OtZE30X4Ugv06VYUKY7RcneKDg",
+      authDomain: "sler-chat-lab.firebaseapp.com",
+      databaseURL: "https://sler-chat-lab-default-rtdb.firebaseio.com",
+      projectId: "sler-chat-lab",
+      storageBucket: "sler-chat-lab.firebasestorage.app",
+      messagingSenderId: "594954603335",
+      appId: "1:594954603335:web:02f0183659d8c752521a62",
+      measurementId: "G-X4Z6HLBF2H"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const logDiv = document.getElementById("log");
+    function agregarLog(texto) {
+      logDiv.innerHTML += `<br>> ${texto}`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+   const ejerciciosAMigrar = [
+      {
+        idDoc: "ej_88",
+        data: {
+          nivel: "5 (TOP)",
+          tanda: 10,
+          tipo_flujo: "sler_layout",
+          lineas: [
+            { tipo: "M", texto: "La lectura es la puerta de entrada a mundos desconocidos una" },
+            { tipo: "C", texto: ",imaginacion la estimula que transformadora herramienta ," }, // <--- "imagina" actualizado a "Imagina"
+            { tipo: "M", texto: "fortalece la memoria y expande nuestro vocabulario" },
+            { tipo: "C", texto: "don, infancia la en sea Ya .vida la de etapas las todas en" },
+            { tipo: "M", texto: "-de nutre la curiosidad, o en la adultez, donde ejercita la" },
+            { tipo: "C", texto: "prácticas las de una es libro un abrir,cerebral plasticidad" },
+            { tipo: "M", texto: "más enriquecedoras para la mente. Sin embargo, la forma" },
+            { tipo: "C", texto: "acom siempre no diseñadas están páginas nuestras que en" },
+            { tipo: "M", texto: "-paña la anatomía natural de nuestros ojos. Durante siglos" },
+            { tipo: "C", texto: "-cada terminar al izquierda a derecha de saltando leímos," },
+            { tipo: "M", texto: "línea, un movimiento brusco que interrumpe la concentra-" },
+            { tipo: "C", texto: "-sis o zigzag en lectura La .visual cansancio genera y ción" },
+            { tipo: "M", texto: "-tema recíproco propone una alternativa más fluida y natu-" },
+            { tipo: "C", texto: "descien y línea una en avance vista la que permitir Al .ral" },
+            { tipo: "M", texto: "-da suavemente para leer la siguiente en sentido contrario," },
+            { tipo: "C", texto: "de los fatiga la reduce Esto. 'vacío al salto' el elimina se" },
+            { tipo: "M", texto: "músculos oculares, mantiene la atención continua y hace" },
+            { tipo: "C", texto: "y descansado, cómodo más mucho sea leer de acto el que" },
+            { tipo: "M", texto: "ágil para niños, jóvenes y adultos por igual." }
+          ]
+        }
+      }
+    ];
+
+    document.getElementById("btn-migrar").addEventListener("click", async () => {
+      agregarLog("Conectando con Firestore...");
+      
+      try {
+        for (const ej of ejerciciosAMigrar) {
+          await setDoc(doc(db, "ejercicios", ej.idDoc), ej.data);
+          agregarLog(`Guardado con éxito: ${ej.idDoc}`);
+        }
+        agregarLog("¡MIGRACIÓN COMPLETA! Ejercicio 88 cargado correctamente en Firebase.");
+      } catch (e) {
+        agregarLog("Error durante la migración: " + e.message);
+      }
+    });
+  </script>
+</body>
+</html>

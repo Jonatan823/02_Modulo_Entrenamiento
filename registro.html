@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>SLER - Inscripción y Pago del Curso</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 min-h-screen flex items-center justify-center p-4 font-sans">
+
+  <div class="bg-slate-800 border border-slate-700 rounded-xl p-8 max-w-md w-full shadow-2xl">
+    
+    <!-- ETAPA 1: FORMULARIO DE REGISTRO Y PAGO -->
+    <div id="paso-registro">
+      <div class="text-center mb-6">
+        <span class="bg-blue-500/10 text-blue-400 border border-blue-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+          Paso 1 de 2: Inscripción
+        </span>
+        <h1 class="text-2xl font-black text-white mt-3">Inscripción al Curso SLER</h1>
+        <p class="text-slate-400 text-xs mt-1">Ingresa tus datos para registrar la activación del curso.</p>
+      </div>
+
+      <form onsubmit="procesarInscripcionYPago(event)" class="space-y-4">
+        <div>
+          <label class="block text-slate-300 text-xs font-bold mb-1 uppercase">Nombre y Apellido</label>
+          <input type="text" id="nombre" required placeholder="Ej: Juan Pérez" class="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500 text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-slate-300 text-xs font-bold mb-1 uppercase">Correo Electrónico</label>
+          <input type="email" id="email" required placeholder="tu@email.com" class="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500 text-sm" />
+        </div>
+
+        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700 space-y-2">
+          <div class="flex justify-between text-xs text-slate-300">
+            <span>Acceso Completo al Curso SLER</span>
+            <span class="font-bold text-emerald-400">Arancel Único</span>
+          </div>
+          <div class="text-xs text-slate-400 border-t border-slate-800 pt-2">
+            Confirmación directa y entrega de clave de acceso.
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 rounded-lg text-sm transition tracking-wider uppercase">
+          PAGAR Y CONTINUAR A ACTIVACIÓN
+        </button>
+      </form>
+    </div>
+
+    <!-- ETAPA 2: VALIDACIÓN DE PIN (LOGIN EN ESPERA) -->
+    <div id="paso-login" class="hidden">
+      <div class="text-center mb-6">
+        <span class="bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+          Paso 2 de 2: Activación
+        </span>
+        <h2 class="text-2xl font-black text-white mt-3">Validación de Acceso</h2>
+        <p class="text-slate-400 text-xs mt-1">Ingresa tu clave PIN de activación para ingresar al entrenamiento.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-slate-300 text-xs font-bold mb-1 uppercase text-center">Código de Activación (PIN)</label>
+          <input type="text" id="pin-ingresado" placeholder="000000" class="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500 text-center text-xl font-mono tracking-widest" />
+        </div>
+
+        <div id="mensaje-validacion" class="hidden p-3 rounded text-xs font-semibold text-center"></div>
+
+        <button onclick="validarPinEIngresar()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg text-sm transition tracking-wider uppercase">
+          ACTIVAR E INGRESAR AL CURSO
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // DEFINE AQUÍ TU PIN GENÉRICO / FIJO:
+    const PIN_GENERICO = "123456";
+
+    function procesarInscripcionYPago(e) {
+      e.preventDefault();
+      
+      const nombreUsuario = document.getElementById('nombre').value;
+      const correoUsuario = document.getElementById('email').value;
+
+      // Guardar datos del usuario
+      localStorage.setItem('sler_usuario', nombreUsuario);
+      localStorage.setItem('sler_email', correoUsuario);
+
+      // Pasar directo a la vista de validación de PIN
+      document.getElementById('paso-registro').classList.add('hidden');
+      document.getElementById('paso-login').classList.remove('hidden');
+    }
+
+    function validarPinEIngresar() {
+      const pinInput = document.getElementById('pin-ingresado').value.trim();
+      const msg = document.getElementById('mensaje-validacion');
+
+      // Compara directamente con la clave fija configurada
+      if (pinInput === PIN_GENERICO) {
+        msg.className = "p-3 rounded text-xs font-semibold text-center bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        msg.innerText = "¡Clave verificada con éxito! Redirigiendo al curso...";
+        msg.classList.remove('hidden');
+
+        localStorage.setItem('sler_acceso_concedido', 'true');
+
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1200);
+      } else {
+        msg.className = "p-3 rounded text-xs font-semibold text-center bg-red-500/20 text-red-400 border border-red-500/30";
+        msg.innerText = "Código PIN incorrecto. Intenta nuevamente.";
+        msg.classList.remove('hidden');
+      }
+    }
+  </script>
+
+</body>
+</html>

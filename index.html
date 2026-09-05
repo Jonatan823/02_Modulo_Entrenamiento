@@ -11,7 +11,7 @@
 </head>
 <body class="h-screen flex flex-col justify-between p-4 overflow-hidden">
   <!-- PANTALLA DE LOGIN PREVIO -->
-  <div id="pantalla-login" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
+  <div id="pantalla-login" class="hidden-screen fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
     <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-md w-full text-center shadow-2xl">
       <h2 class="text-2xl font-bold text-white mb-2">Acceso a SLER</h2>
       <p class="text-slate-400 text-sm mb-6">Ingresa tu correo y el código de activación enviado a tu e-mail para desbloquear el entrenamiento.</p>
@@ -106,7 +106,7 @@
       <span id="label-nivel" class="font-bold text-yellow-400 text-lg">NIVEL 1 (Inicial) / EJERCICIO 1</span>
       
       <div class="flex items-center gap-4">
-        <a href="mailto:soporte@sler-lectura.com?subject=Consulta%20SLER%20-%20Soporte%20Tecnico" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs px-3 py-1.5 rounded border border-slate-600 transition flex items-center gap-1">
+        <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20SLER%20-%20Soporte%20Tecnico" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs px-3 py-1.5 rounded border border-slate-600 transition flex items-center gap-1">
           ✉️ Soporte Mail
         </a>
 
@@ -184,6 +184,7 @@
       </p>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-left mt-2">
+        <!-- Extensión Chrome -->
         <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 flex flex-col justify-between">
           <div>
             <h3 class="font-bold text-yellow-400 text-lg mb-2">Práctica Continua (Extensión Chrome)</h3>
@@ -191,11 +192,27 @@
               Experimenta la versión gratuita directa en tu navegador para aplicar la lectura recíproca a cualquier texto web mientras navegas.
             </p>
           </div>
-          <a href="#" onclick="alert('Enlace a la Extensión de Chrome en desarrollo')" class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2 px-4 rounded text-center transition">
+          <a href="https://chromewebstore.google.com/detail/dgildmjcbnjhpbblclglkcfhoheifilb?utm_source=item-share-cb" target="_blank" class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2 px-4 rounded text-center transition">
             PROBAR EXTENSIÓN CHROME
           </a>
         </div>
 
+        <!-- Extensión Edge -->
+        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-blue-400 text-lg mb-2">Práctica Continua (Extensión Edge)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              Instala la extensión adaptada para Microsoft Edge y mantén el entrenamiento activo en tu navegador predeterminado.
+            </p>
+          </div>
+          <a href="https://microsoftedge.microsoft.com/addons/detail/sler-sistema-de-lectura-y/dgildmjcbnjhpbblclglkcfhoheifilb" target="_blank" class="inline-block bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs py-2 px-4 rounded text-center transition">
+            PROBAR EXTENSIÓN EDGE
+          </a>
+        </div>
+      </div>
+
+      <!-- Recuadro de Transcripción Compleja & IA (Restaurado) -->
+      <div class="w-full text-left mt-1">
         <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 flex flex-col justify-between">
           <div>
             <h3 class="font-bold text-emerald-400 text-lg mb-2">Transcripción Compleja & IA</h3>
@@ -203,15 +220,15 @@
               Próximamente: Servicio avanzado con Inteligencia Artificial para transcripción, recolección de datos y procesamiento de libros y documentos extensos al formato SLER.
             </p>
           </div>
-          <span class="inline-block bg-slate-700 text-slate-400 font-bold text-xs py-2 px-4 rounded text-center border border-slate-600">
+          <span class="inline-block bg-slate-700 text-slate-400 font-bold text-xs py-2 px-4 rounded text-center border border-slate-600 w-fit">
             PRÓXIMAMENTE
           </span>
         </div>
       </div>
 
       <div class="pt-4 border-t border-slate-800 w-full flex flex-col items-center gap-3">
-        <a href="mailto:soporte@sler-lectura.com?subject=Consulta%20Pedagogica%20-%20SLER" class="text-sm font-semibold text-emerald-400 hover:underline flex items-center gap-2">
-          ✉️ ¿Tienes dudas pedagógicas sobre tu avance? Escríbenos por correo
+        <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20Pedagogica%20-%20SLER" class="text-sm font-semibold text-emerald-400 hover:underline flex items-center gap-2">
+          ✉️ ¿Tienes dudas pedagógicas sobre tu avance? Escríbenos a proferibotmusic@hotmail.com
         </a>
 
         <a href="https://sler.app" target="_blank" class="text-sm font-semibold text-blue-400 hover:underline">
@@ -422,7 +439,11 @@
 
     window.mostrarPantallaFinal = function() {
       document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : 88} / 88`;
-      document.getElementById('stat-tiempo').innerText = "00:00:00";
+      
+      const relojPrincipal = document.getElementById('reloj');
+      const tiempoTotalAcumulado = relojPrincipal ? relojPrincipal.innerText : "00:00:00";
+      document.getElementById('stat-tiempo').innerText = tiempoTotalAcumulado;
+
       window.cambiarPantalla('pantalla-final');
     };
   </script>

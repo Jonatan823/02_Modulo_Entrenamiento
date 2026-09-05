@@ -411,9 +411,16 @@ window.validarAccesoPin = function() {
 };
 
 function verificarSesionPrevia() {
+  const accesoConcedido = localStorage.getItem("sler_acceso_concedido");
   const estaValidado = localStorage.getItem("sler_usuario_validado");
-  if (estaValidado === "true") {
+
+  // Si viene con permiso concedido desde el Portal Central o ya inició sesión previamente:
+  if (accesoConcedido === "true" || estaValidado === "true") {
     ocultarPantallaLogin();
+    if (!localStorage.getItem("sler_fecha_inicio")) {
+      localStorage.setItem("sler_fecha_inicio", new Date().getTime());
+    }
+    cargarEjercicio(1);
   }
 }
 

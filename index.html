@@ -1,172 +1,463 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicación de Música</title>
-    <style>
-        :root {
-            --bg-color: #121212;
-            --surface-color: #1e1e1e;
-            --primary-color: #bb86fc;
-            --secondary-color: #03dac6;
-            --text-color: #e0e0e0;
-            --text-secondary: #a0a0a0;
-            --border-color: #333333;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        header h1 {
-            font-size: 1.8rem;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-        }
-
-        header p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        main {
-            flex: 1;
-            max-width: 800px;
-            width: 100%;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .card {
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .card h2 {
-            font-size: 1.2rem;
-            margin-bottom: 12px;
-            color: var(--secondary-color);
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: #121212;
-            border: none;
-            border-radius: 6px;
-            padding: 10px 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.2s ease;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        .display-area {
-            min-height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px dashed var(--border-color);
-            font-size: 1.1rem;
-            color: var(--text-color);
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>SLER - Módulo de Entrenamiento Web</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SDK de EmailJS para el envío de correos automáticos -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function() {
+      emailjs.init("TU_PUBLIC_KEY"); // Reemplaza con tu Public Key de EmailJS cuando lo conectes
+    })();
+  </script>
+  <style>
+    body { background: #cbd5e1; margin: 0; font-family: sans-serif; }
+    .hidden-screen { display: none !important; }
+  </style>
 </head>
-<body>
+<body class="h-screen flex flex-col justify-between p-4 overflow-hidden">
 
-    <header>
-        <h1>Clase de Música</h1>
-        <p>Entorno de enseñanza interactivo</p>
-    </header>
+  <!-- PANTALLA DE LOGIN / REGISTRO PREVIO -->
+  <div id="pantalla-login" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-md w-full text-center shadow-2xl">
+      <h2 class="text-2xl font-bold text-white mb-2">Acceso a SLER</h2>
+      <p class="text-slate-400 text-sm mb-6">Ingresa tus datos o disfruta directamente del Modo Freemium (Niveles 1 y 2 libres sin costo).</p>
+      
+      <input type="text" id="login-nombre" placeholder="Nombre y Apellido" class="w-full mb-3 px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500" />
+      <input type="email" id="login-email" placeholder="tu@email.com" class="w-full mb-3 px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500" />
+      <input type="text" id="login-pin" placeholder="PIN de activación (Opcional si usas Freemium)" class="w-full mb-6 px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500 text-center font-mono tracking-widest" />
+      
+      <button onclick="validarAccesoUsuario()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-lg transition shadow-lg">INGRESAR AL CURSO</button>
+      
+      <div class="mt-4 text-xs text-slate-400">
+        ¿Quieres empezar ya? <span onclick="entrarModoFreemium()" class="text-blue-400 cursor-pointer underline hover:text-blue-300">Entrar en Modo Freemium (Niveles 1 y 2 Gratuitos)</span>
+      </div>
+    </div>
+  </div>
 
-    <main>
-        <section class="card">
-            <h2>Panel de Control</h2>
-            <div class="controls">
-                <button id="btnAccion1">Iniciar</button>
-                <button id="btnAccion2">Pausar</button>
-                <button id="btnAccion3">Reiniciar</button>
-            </div>
-        </section>
+  <!-- MODAL DE PAGO Y CAPTURA DE DATOS (Nivel 3 en adelante) -->
+  <div id="modal-pago" class="hidden-screen fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-yellow-500/40 rounded-2xl p-6 max-w-lg w-full text-center shadow-2xl space-y-4">
+      <div class="inline-block bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 font-bold px-3 py-1 rounded-full text-xs uppercase tracking-widest">
+        Acceso Completo Pro — $1 USD
+      </div>
+      <h3 class="text-2xl font-black text-white">Desbloquea el Nivel 3 y Avanzados</h3>
+      <p class="text-slate-300 text-xs leading-relaxed">
+        Has completado los niveles gratuitos. Completa tus datos para registrar el pago por Mercado Pago ($1 USD) y recibir tu PIN de acceso automático.
+      </p>
 
-        <section class="card">
-            <h2>Área de Trabajo</h2>
-            <div class="display-area" id="displayArea">
-                Seleccione una opción para comenzar la actividad.
-            </div>
-        </section>
-    </main>
+      <!-- Formulario de datos para el pago y aviso -->
+      <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 text-left space-y-3">
+        <label class="block text-xs font-bold text-slate-300 uppercase">Tus Datos para la Licencia:</label>
+        <input type="text" id="pago-nombre" placeholder="Nombre y Apellido" class="w-full px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs" />
+        <input type="email" id="pago-email" placeholder="Correo electrónico para recibir el PIN" class="w-full px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs" />
+        
+        <div class="pt-2">
+          <label class="block text-xs font-bold text-slate-300 uppercase mb-1">¿Ya tienes tu PIN de Mercado Pago?</label>
+          <div class="flex gap-2">
+            <input type="text" id="input-pin-pago" placeholder="Ingresa tu PIN recibido" class="flex-1 px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs font-mono" />
+            <button onclick="canjearPinPago()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded text-xs">Validar PIN</button>
+          </div>
+        </div>
+      </div>
 
-    <footer>
-        <p>&copy; 2026 - Aplicación Didáctica</p>
-    </footer>
+      <div class="flex flex-col gap-2 pt-2">
+        <!-- Enlace a Mercado Pago (reemplaza el href con tu link de cobro de Mercado Pago de $1 USD) -->
+        <a href="https://link.mercadopago.com.ar/tu-link-de-pago" target="_blank" onclick="registrarSolicitudPago()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition shadow flex items-center justify-center gap-2">
+          💳 PAGAR CON MERCADO PAGO ($1 USD)
+        </a>
+        <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-white text-xs underline py-1">
+          Volver a los niveles gratuitos (1 y 2)
+        </button>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const btnAccion1 = document.getElementById('btnAccion1');
-            const btnAccion2 = document.getElementById('btnAccion2');
-            const btnAccion3 = document.getElementById('btnAccion3');
-            const displayArea = document.getElementById('displayArea');
+  <!-- 0. PANTALLA INICIAL AUSPICIOSA (VERSIÓN FREE / FREEMIUM) -->
+  <div id="pantalla-presentacion" class="flex flex-col items-center justify-center flex-1 bg-slate-900 text-white rounded-lg shadow-2xl p-8 m-4 overflow-y-auto">
+    <div class="max-w-3xl w-full flex flex-col items-center text-center space-y-6">
+      
+      <div class="inline-block bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold px-4 py-1 rounded-full text-xs uppercase tracking-widest shadow">
+        ✨ Edición Abierta — Niveles 1 y 2 Libres (Versión Free)
+      </div>
 
-            btnAccion1.addEventListener('click', () => {
-                displayArea.textContent = 'Actividad iniciada correctamente.';
-            });
+      <h1 class="text-4xl font-black text-white tracking-tight">
+        DOMINA LA TÉCNICA DE LECTURA RECÍPROCA SLER
+      </h1>
+      
+      <p class="text-slate-300 text-base leading-relaxed max-w-2xl">
+        Entrena tu agilidad visual, optimiza tu velocidad y reduce los movimientos sacádicos innecesarios mediante el sistema interactivo patentado. Disfruta de los primeros dos niveles de formación completa sin costo inicial.
+      </p>
 
-            btnAccion2.addEventListener('click', () => {
-                displayArea.textContent = 'Actividad en pausa.';
-            });
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-left my-2">
+        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700">
+          <h3 class="font-bold text-emerald-400 text-sm uppercase mb-2">🚀 Acceso Libre Garantizado</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Comienza de inmediato los bloques Inicial y Elemental (hasta el ejercicio 51) con total libertad.
+          </p>
+        </div>
 
-            btnAccion3.addEventListener('click', () => {
-                displayArea.textContent = 'Seleccione una opción para comenzar la actividad.';
-            });
+        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700">
+          <h3 class="font-bold text-yellow-400 text-sm uppercase mb-2">💡 Asesoría & Soporte Pedagógico</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Canales directos de consulta con el equipo de desarrollo y soporte técnico especializado para optimizar tu experiencia.
+          </p>
+        </div>
+      </div>
+
+      <button onclick="irABienvenida()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-10 rounded-lg shadow-lg text-lg transition transform active:scale-95">
+        INGRESAR AL PROGRAMA
+      </button>
+
+    </div>
+  </div>
+
+  <!-- 1. PANTALLA DE BIENVENIDA -->
+  <div id="pantalla-bienvenida" class="hidden-screen flex flex-col items-center justify-center flex-1 text-center bg-white rounded-lg shadow-lg p-8 m-4">
+    <h1 class="text-4xl font-extrabold text-slate-800 mb-4">ENTRENAMIENTO LECTURA SLER</h1>
+    <p class="text-slate-600 max-w-lg mb-8 text-lg">
+      Selecciona tu punto de partida. Los niveles 1 y 2 se encuentran completamente habilitados en versión libre.
+    </p>
+    <div class="flex gap-4">
+      <button onclick="iniciarNivel(1)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow-md text-base transition">
+        NIVEL 1 (GRATIS)
+      </button>
+      <button onclick="iniciarNivel(2)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow-md text-base transition">
+        NIVEL 2 (GRATIS)
+      </button>
+      <button onclick="iniciarNivel(3)" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-6 rounded-lg shadow-md text-base transition">
+        NIVEL 3 🔒 (PAGO)
+      </button>
+    </div>
+  </div>
+
+  <!-- 1.5 PANTALLA PORTADA DE NIVEL -->
+  <div id="pantalla-portada-nivel" class="hidden-screen flex-1 flex flex-col items-center justify-center bg-slate-800 text-white rounded-lg shadow-2xl p-8 m-4">
+    <div class="max-w-xl w-full text-center space-y-6">
+      <span id="portada-tag" class="text-xs font-bold text-yellow-400 uppercase tracking-widest bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/30">
+        BLOQUE DE ENTRENAMIENTO
+      </span>
+      <h2 id="portada-titulo" class="text-4xl font-black text-white">NIVEL 1</h2>
+      <p id="portada-desc" class="text-slate-300 text-sm leading-relaxed">
+        Descripción del objetivo del nivel.
+      </p>
+
+      <div class="bg-slate-900 p-4 rounded-lg border border-slate-700 text-left text-xs text-slate-300 space-y-2">
+        <div class="font-bold text-emerald-400 uppercase">Especificaciones del Nivel:</div>
+        <ul class="list-disc list-inside space-y-1 text-slate-400" id="portada-opciones">
+          <li>Secuencia optimizada de lectura recíproca.</li>
+        </ul>
+      </div>
+
+      <button id="btn-comenzar-nivel" onclick="comenzarEjerciciosNivel()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 px-12 rounded-lg text-lg transition shadow-lg">
+        COMENZAR NIVEL
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. PANTALLA DE ENTRENAMIENTO -->
+  <div id="pantalla-ejercicio" class="hidden-screen flex-1 flex flex-col gap-3 min-h-0">
+    <div class="bg-slate-900 text-white p-3 rounded-md flex justify-between items-center px-6">
+      <span id="label-nivel" class="font-bold text-yellow-400 text-lg">NIVEL 1 / EJERCICIO 1</span>
+      
+      <div class="flex items-center gap-4">
+        <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20SLER%20-%20Soporte%20Tecnico" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs px-3 py-1.5 rounded border border-slate-600 transition flex items-center gap-1">
+          ✉️ Soporte Mail
+        </a>
+
+        <button onclick="mostrarPantallaFinal()" class="bg-purple-700 hover:bg-purple-600 text-white font-bold text-xs px-3 py-1.5 rounded border border-purple-400 transition shadow">
+          ⚙️ TEST: PANTALLA FINAL
+        </button>
+
+        <div class="flex items-center gap-2">
+          <label for="select-ejercicio-global" class="text-sm font-semibold text-slate-300">Ejercicio Actual:</label>
+          <select id="select-ejercicio-global" onchange="seleccionarEjercicioGlobal(this.value)" class="bg-slate-800 text-yellow-400 font-bold px-3 py-1 rounded border border-slate-600">
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="select-total-tandas" class="text-sm font-semibold text-slate-400">Mapa de Avance:</label>
+          <select id="select-total-tandas" onchange="saltarATanda(this.value)" class="bg-slate-950 text-emerald-400 font-bold px-3 py-1 rounded border border-slate-700 cursor-pointer shadow-inner">
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-1 flex gap-4 min-h-0">
+      <div class="flex-1 bg-slate-400 rounded-md border-2 border-slate-500 flex items-center justify-center p-6 overflow-hidden">
+        <div class="w-full h-full bg-white rounded flex items-center justify-center p-8 shadow-inner overflow-auto">
+          <h2 id="placeholder" class="text-5xl font-extrabold text-blue-700">SELECCIONE UN EJERCICIO</h2>
+          <div id="display-sler" class="text-7xl font-extrabold text-slate-900 tracking-widest"></div>
+          <div id="render" class="hidden text-3xl font-mono text-slate-900 leading-relaxed whitespace-pre-wrap"></div>
+        </div>
+      </div>
+
+      <div class="w-80 bg-slate-100 rounded-md border border-slate-300 p-4 flex flex-col">
+        <h3 class="text-xs font-bold text-slate-400 uppercase border-b pb-2 mb-2">MARCAS REGISTRADAS</h3>
+        <div id="lista-marcas" class="flex-1 overflow-y-auto space-y-2 text-sm font-mono">
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-slate-800 p-4 rounded-md flex justify-between items-center px-8 border-t-2 border-slate-700">
+      <div id="reloj" class="text-4xl font-mono font-bold bg-black text-yellow-400 px-6 py-2 rounded-lg border border-yellow-500/30 tracking-widest shadow-inner">
+        00:00:00
+      </div>
+      
+      <button id="btn" onclick="manejarDisparo()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-2xl py-3 px-16 rounded-lg shadow-xl uppercase tracking-wider transition transform active:scale-95 border-2 border-emerald-300">
+        START
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. PANTALLA DE FINALIZACIÓN Y LOGROS -->
+  <div id="pantalla-final" class="hidden-screen flex-1 flex flex-col items-center justify-center bg-slate-900 text-white rounded-lg shadow-2xl p-8 m-4 overflow-y-auto">
+    <div class="max-w-3xl w-full flex flex-col items-center text-center space-y-6">
+      
+      <div class="inline-block bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold px-4 py-1 rounded-full text-sm uppercase tracking-widest">
+        ¡Entrenamiento Completado!
+      </div>
+
+      <h1 class="text-4xl font-black text-yellow-400 tracking-tight">RESUMEN DE LOGROS ALCANZADOS</h1>
+      
+      <div class="grid grid-cols-2 gap-4 w-full max-w-lg bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-inner">
+        <div class="flex flex-col items-center border-r border-slate-700 pr-4">
+          <span class="text-slate-400 text-xs font-semibold uppercase">Ejercicios Completados</span>
+          <span id="stat-ejercicios" class="text-4xl font-black text-white mt-1">88 / 88</span>
+        </div>
+        <div class="flex flex-col items-center pl-4">
+          <span class="text-slate-400 text-xs font-semibold uppercase">Tiempo Total ("Horas de Vuelo")</span>
+          <span id="stat-tiempo" class="text-3xl font-mono font-bold text-emerald-400 mt-1">00:00:00</span>
+        </div>
+      </div>
+
+      <button onclick="irABienvenida()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-8 rounded-lg text-sm transition mt-2">
+        REINICIAR ENTRENAMIENTO
+      </button>
+    </div>
+  </div>
+
+  <!-- LÓGICA DE NAVEGACIÓN Y CORREOS -->
+  <script type="module">
+    import { cargarEjercicio, manejarDisparo as disparoFirestore } from "./main.js";
+
+    const infoNiveles = {
+      1: { titulo: "NIVEL 1: INICIAL", desc: "Adaptación del foco visual mediante revelado taquistoscópico.", opciones: ["Patrón de estímulo silábico directo", "Tandas 1 y 2 (Ejercicios 1 al 21)", "Versión Free"], esGratis: true },
+      2: { titulo: "NIVEL 2: ELEMENTAL", desc: "Estructuras de oraciones con alternancia de dirección.", opciones: ["Incorporación del motor de ritmo dinámico", "Tandas 3 a 5 (Ejercicios 22 al 51)", "Versión Free"], esGratis: true },
+      3: { titulo: "NIVEL 3: INTERMEDIO", desc: "Procesamiento de párrafos continuos (Requiere Licencia Pro).", opciones: ["Textos de mayor densidad semántica", "Tandas 6 y 7 (Ejercicios 52 al 71)", "Acreditación Pro"], esGratis: false },
+      4: { titulo: "NIVEL 4: AVANZADO", desc: "Máximo rendimiento de lectura continua (Requiere Licencia Pro).", opciones: ["Formato completo de competencia", "Tandas 8 y 9 (Ejercicios 72 al 87)", "Evaluación de Horas de Vuelo"], esGratis: false },
+      5: { titulo: "NIVEL 5 (TOP): TEXTO COMPLETO", desc: "Evaluación superior sobre lecturas de alta longitud (Requiere Licencia Pro).", opciones: ["Texto de alta densidad", "Ejercicio 88", "Acreditación superior"], esGratis: false }
+    };
+
+    let ejAct = 1;
+    let nivelSeleccionado = 1;
+    let ejerciciosContabilizados = 0;
+    let usuarioPremium = false;
+
+    window.validarAccesoUsuario = function() {
+      const nombre = document.getElementById('login-nombre').value.trim();
+      const email = document.getElementById('login-email').value.trim();
+      const pin = document.getElementById('login-pin').value.trim();
+
+      if(!nombre || !email) {
+        alert("Por favor completa tu nombre y correo electrónico.");
+        return;
+      }
+
+      if(pin === "SLER-PRO-2026" || pin === "ADMIN-SLER") {
+        usuarioPremium = true;
+        alert("¡PIN válido! Acceso completo desbloqueado.");
+      }
+
+      document.getElementById('pantalla-login').classList.add('hidden-screen');
+    };
+
+    window.entrarModoFreemium = function() {
+      const email = document.getElementById('login-email').value.trim();
+      if(!email) {
+        document.getElementById('login-email').value = "invitado@sler.app";
+      }
+      document.getElementById('pantalla-login').classList.add('hidden-screen');
+    };
+
+    // Envía aviso a tu correo mediante EmailJS cuando el usuario completa sus datos en el modal de pago
+    window.registrarSolicitudPago = function() {
+      const nombre = document.getElementById('pago-nombre').value.trim();
+      const email = document.getElementById('pago-email').value.trim();
+
+      if(!nombre || !email) {
+        alert("Por favor completa tu nombre y email antes de proceder al pago.");
+        return;
+      }
+
+      // Parámetros que se envían a tu plantilla de EmailJS
+      const templateParams = {
+        to_name: "Jonatan",
+        user_name: nombre,
+        user_email: email,
+        mensaje: `El usuario ${nombre} (${email}) ha iniciado el proceso de compra por Mercado Pago ($1 USD).`
+      };
+
+      // Aquí puedes usar tu template_9gypr28 o ID de plantilla de aviso
+      emailjs.send('default_service', 'template_9gypr28', templateParams)
+        .then(() => {
+          console.log("Aviso enviado al maestro con éxito.");
+        }, (err) => {
+          console.error("Error al enviar el aviso:", err);
         });
-    </script>
+    };
+
+    window.canjearPinPago = function() {
+      const pin = document.getElementById('input-pin-pago').value.trim();
+      if(pin === "SLER-PRO-2026" || pin === "SLER-PASS") {
+        usuarioPremium = true;
+        alert("¡Licencia activada con éxito!");
+        document.getElementById('modal-pago').classList.add('hidden-screen');
+        window.iniciarNivel(nivelSeleccionado);
+      } else {
+        alert("PIN incorrecto. Verifica el código enviado a tu correo tras realizar el pago.");
+      }
+    };
+
+    window.cerrarModalPago = function() {
+      document.getElementById('modal-pago').classList.add('hidden-screen');
+      window.iniciarNivel(2);
+    };
+
+    window.cambiarPantalla = function(idMostrar) {
+      document.getElementById('pantalla-presentacion').classList.add('hidden-screen');
+      document.getElementById('pantalla-bienvenida').classList.add('hidden-screen');
+      document.getElementById('pantalla-portada-nivel').classList.add('hidden-screen');
+      document.getElementById('pantalla-ejercicio').classList.add('hidden-screen');
+      document.getElementById('pantalla-final').classList.add('hidden-screen');
+      document.getElementById(idMostrar).classList.remove('hidden-screen');
+    };
+
+    window.irABienvenida = function() {
+      window.cambiarPantalla('pantalla-bienvenida');
+    };
+
+    const inicioPorTanda = { 1: 1, 2: 12, 3: 22, 4: 32, 5: 42, 6: 52, 7: 62, 8: 72, 9: 82, 10: 88 };
+
+    window.saltarATanda = function(tanda) {
+      const ejInicio = inicioPorTanda[tanda] || 1;
+      if (ejInicio >= 52 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+      window.seleccionarEjercicioGlobal(ejInicio);
+    };
+
+    window.iniciarNivel = function(numNivel) {
+      if (numNivel >= 3 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+
+      nivelSeleccionado = numNivel;
+      const data = infoNiveles[numNivel];
+      document.getElementById('portada-titulo').innerText = data.titulo;
+      document.getElementById('portada-desc').innerText = data.desc;
+      const ul = document.getElementById('portada-opciones');
+      ul.innerHTML = '';
+      data.opciones.forEach(op => {
+        const li = document.createElement('li');
+        li.innerText = op;
+        ul.appendChild(li);
+      });
+      window.cambiarPantalla('pantalla-portada-nivel');
+    };
+
+    window.comenzarEjerciciosNivel = function() {
+      if (nivelSeleccionado >= 3 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+
+      let ejInicio = 1;
+      if (nivelSeleccionado === 2) ejInicio = 22;
+      else if (nivelSeleccionado === 3) ejInicio = 52;
+      else if (nivelSeleccionado === 4) ejInicio = 72;
+      else if (nivelSeleccionado === 5) ejInicio = 88;
+
+      window.cambiarPantalla('pantalla-ejercicio');
+      inicializarDropdowns();
+      window.seleccionarEjercicioGlobal(ejInicio);
+    };
+
+    function inicializarDropdowns() {
+      const selectEj = document.getElementById('select-ejercicio-global');
+      selectEj.innerHTML = '';
+      for (let i = 1; i <= 88; i++) {
+        const optEj = document.createElement('option');
+        optEj.value = i;
+        optEj.innerText = `Ej. ${i} ${i >= 52 && !usuarioPremium ? '🔒 (Pago)' : ''}`;
+        selectEj.appendChild(optEj);
+      }
+      actualizarMapaGeneral();
+    }
+
+    function actualizarMapaGeneral() {
+      const selectTotal = document.getElementById('select-total-tandas');
+      selectTotal.innerHTML = '';
+      
+      const tandasInfo = [
+        { t: 1, niv: 1, rango: "1-11" }, { t: 2, niv: 1, rango: "12-21" },
+        { t: 3, niv: 2, rango: "22-31" }, { t: 4, niv: 2, rango: "32-41" }, { t: 5, niv: 2, rango: "42-51" },
+        { t: 6, niv: 3, rango: "52-61" }, { t: 7, niv: 3, rango: "62-71" },
+        { t: 8, niv: 4, rango: "72-81" }, { t: 9, niv: 4, rango: "82-87" },
+        { t: 10, niv: "5 (TOP)", rango: "88" }
+      ];
+
+      tandasInfo.forEach(info => {
+        const optTanda = document.createElement('option');
+        optTanda.value = info.t;
+        let tandaActual = 1;
+        if (ejAct >= 12 && ejAct <= 21) tandaActual = 2;
+        else if (ejAct >= 22 && ejAct <= 31) tandaActual = 3;
+        else if (ejAct >= 32 && ejAct <= 41) tandaActual = 4;
+        else if (ejAct >= 42 && ejAct <= 51) tandaActual = 5;
+        else if (ejAct >= 52 && ejAct <= 61) tandaActual = 6;
+        else if (ejAct >= 62 && ejAct <= 71) tandaActual = 7;
+        else if (ejAct >= 72 && ejAct <= 81) tandaActual = 8;
+        else if (ejAct >= 82 && ejAct <= 87) tandaActual = 9;
+        else if (ejAct >= 88) tandaActual = 10;
+
+        let bloqueado = (info.t >= 6 && !usuarioPremium);
+        let estadoTexto = info.t === tandaActual ? "◄ [EN CURSO]" : (info.t < tandaActual ? "✓" : "");
+        if (bloqueado) estadoTexto = "🔒 [PRO]";
+
+        optTanda.innerText = `Nivel ${info.niv} — Ej. ${info.rango} ${estadoTexto}`;
+        if (info.t === tandaActual) optTanda.selected = true;
+        selectTotal.appendChild(optTanda);
+      });
+    }
+
+    window.seleccionarEjercicioGlobal = function(val) {
+      const numEj = parseInt(val);
+      if (numEj >= 52 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+
+      ejAct = numEj;
+      const selectEj = document.getElementById('select-ejercicio-global');
+      if (selectEj) selectEj.value = ejAct;
+      actualizarMapaGeneral();
+      cargarEjercicio(ejAct);
+    };
+
+    window.manejarDisparo = function() {
+      disparoFirestore();
+    };
+
+    window.mostrarPantallaFinal = function() {
+      document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : (usuarioPremium ? '88' : '51')} / 88`;
+      const relojPrincipal = document.getElementById('reloj');
+      document.getElementById('stat-tiempo').innerText = relojPrincipal ? relojPrincipal.innerText : "00:00:00";
+      window.cambiarPantalla('pantalla-final');
+    };
+  </script>
 </body>
 </html>

@@ -261,7 +261,11 @@
         return;
       }
 
-      if(pin === "SLER-PRO-2026" || pin === "ADMIN-SLER") {
+      // LLAVE MAESTRA INVISIBLE: Si ingresas tus datos exactos, te otorga acceso total Pro en silencio
+      if (nombre.toLowerCase() === "jonatan ribot" && email.toLowerCase() === "proferibotmusic@hotmail.com") {
+        usuarioPremium = true;
+        alert("Acceso de desarrollador reconocido. Bienvenido, Jonatan.");
+      } else if (pin === "SLER-PRO-2026" || pin === "ADMIN-SLER") {
         usuarioPremium = true;
         alert("¡PIN válido! Acceso completo desbloqueado.");
       }

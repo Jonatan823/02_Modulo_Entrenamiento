@@ -11,11 +11,11 @@
 </head>
 <body class="h-screen flex flex-col justify-between p-4 overflow-hidden">
 
-  <!-- PANTALLA DE LOGIN / REGISTRO PREVIO (Adaptada y visible) -->
+  <!-- PANTALLA DE LOGIN / REGISTRO PREVIO -->
   <div id="pantalla-login" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
     <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-md w-full text-center shadow-2xl">
       <h2 class="text-2xl font-bold text-white mb-2">Acceso a SLER</h2>
-      <p class="text-slate-400 text-sm mb-6">Ingresa tus datos y el PIN de acceso o desbloquea tu modo Freemium (Niveles 1 al 3 libres).</p>
+      <p class="text-slate-400 text-sm mb-6">Ingresa tus datos o disfruta directamente del Modo Freemium (Niveles 1 y 2 libres sin costo).</p>
       
       <input type="text" id="login-nombre" placeholder="Nombre y Apellido" class="w-full mb-3 px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500" />
       <input type="email" id="login-email" placeholder="tu@email.com" class="w-full mb-3 px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500" />
@@ -24,20 +24,20 @@
       <button onclick="validarAccesoUsuario()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-lg transition shadow-lg">INGRESAR AL CURSO</button>
       
       <div class="mt-4 text-xs text-slate-400">
-        ¿No tienes PIN? <span onclick="entrarModoFreemium()" class="text-blue-400 cursor-pointer underline hover:text-blue-300">Entrar en Modo Freemium (Niveles 1-3)</span>
+        ¿Quieres empezar ya? <span onclick="entrarModoFreemium()" class="text-blue-400 cursor-pointer underline hover:text-blue-300">Entrar en Modo Freemium (Niveles 1 y 2 Gratuitos)</span>
       </div>
     </div>
   </div>
 
-  <!-- MODAL DE PAGO / UPGRADE (Aparece al intentar pasar al Nivel 4) -->
+  <!-- MODAL DE PAGO / FORMULARIO (Aparece al intentar pasar al Nivel 3) -->
   <div id="modal-pago" class="hidden-screen fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-yellow-500/40 rounded-2xl p-6 max-w-lg w-full text-center shadow-2xl space-y-4">
       <div class="inline-block bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 font-bold px-3 py-1 rounded-full text-xs uppercase tracking-widest">
         Versión Completa Requerida
       </div>
-      <h3 class="text-2xl font-black text-white">Desbloquea el Nivel 4 y Avanzado</h3>
+      <h3 class="text-2xl font-black text-white">Desbloquea el Nivel 3 y Avanzados</h3>
       <p class="text-slate-300 text-xs leading-relaxed">
-        Has completado con éxito la fase Freemium (Niveles 1, 2 y 3). Para acceder a los bloques superiores, la certificación de horas de vuelo y herramientas IA, adquiere la licencia completa o ingresa tu PIN de pago.
+        Has finalizado con éxito la fase gratuita (Niveles 1 y 2). Para avanzar hacia el Nivel 3, Nivel 4 y módulos superiores, adquiere tu licencia completa o ingresa tu PIN de acceso.
       </p>
 
       <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 text-left space-y-3">
@@ -53,40 +53,40 @@
           💳 COMPRAR ACCESO COMPLETO ($)
         </a>
         <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-white text-xs underline py-1">
-          Volver a los niveles gratuitos (1 a 3)
+          Volver a los niveles gratuitos (1 y 2)
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 0. PANTALLA INSTITUCIONAL / ASESORÍA Y MARKETING -->
+  <!-- 0. PANTALLA INICIAL AUSPICIOSA (VERSIÓN FREE / FREEMIUM) -->
   <div id="pantalla-presentacion" class="flex flex-col items-center justify-center flex-1 bg-slate-900 text-white rounded-lg shadow-2xl p-8 m-4 overflow-y-auto">
     <div class="max-w-3xl w-full flex flex-col items-center text-center space-y-6">
       
-      <div class="inline-block bg-blue-500/10 text-blue-400 border border-blue-500/30 font-bold px-4 py-1 rounded-full text-xs uppercase tracking-widest">
-        Sistema de Lectura y Escritura Recíproco (SLER)
+      <div class="inline-block bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold px-4 py-1 rounded-full text-xs uppercase tracking-widest shadow">
+        ✨ Edición Abierta — Niveles 1 y 2 Libres (Versión Free)
       </div>
 
       <h1 class="text-4xl font-black text-white tracking-tight">
-        OPTIMIZA TU VELOCIDAD Y COMPRENSIÓN LECTORA
+        DOMINA LA TÉCNICA DE LECTURA RECÍPROCA SLER
       </h1>
       
       <p class="text-slate-300 text-base leading-relaxed max-w-2xl">
-        El método SLER transforma la dinámica visual de lectura aprovechando la visión periférica y eliminando saltos sacádicos innecesarios. Este software de entrenamiento progresivo está diseñado para adaptar tu cerebro a patrones de lectura de alta eficiencia.
+        Entrena tu agilidad visual, optimiza tu velocidad y reduce los movimientos sacádicos innecesarios mediante el sistema interactivo patentado. Disfruta de los primeros dos niveles de formación completa sin costo inicial.
       </p>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-left my-2">
         <div class="bg-slate-800 p-5 rounded-lg border border-slate-700">
-          <h3 class="font-bold text-yellow-400 text-sm uppercase mb-2">💡 Asesoría & Soporte Pedagógico</h3>
+          <h3 class="font-bold text-emerald-400 text-sm uppercase mb-2">🚀 Acceso Libre Garantizado</h3>
           <p class="text-xs text-slate-300 leading-relaxed">
-            Accede a guías personalizadas para implementar SLER en ámbitos académicos, docentes o profesionales.
+            Comienza de inmediato los bloques Inicial y Elemental (hasta el ejercicio 51) con total libertad.
           </p>
         </div>
 
         <div class="bg-slate-800 p-5 rounded-lg border border-slate-700">
-          <h3 class="font-bold text-emerald-400 text-sm uppercase mb-2">🚀 Modo Freemium Activo</h3>
+          <h3 class="font-bold text-yellow-400 text-sm uppercase mb-2">💡 Asesoría & Soporte Pedagógico</h3>
           <p class="text-xs text-slate-300 leading-relaxed">
-            Disfruta de los Niveles 1 al 3 de forma totalmente gratuita y evalúa tu progreso en tiempo real.
+            Canales directos de consulta con el equipo de desarrollo y soporte técnico especializado para optimizar tu experiencia.
           </p>
         </div>
       </div>
@@ -98,15 +98,23 @@
     </div>
   </div>
 
-  <!-- 1. PANTALLA DE BIENVENIDA MINIMALISTA -->
+  <!-- 1. PANTALLA DE BIENVENIDA -->
   <div id="pantalla-bienvenida" class="hidden-screen flex flex-col items-center justify-center flex-1 text-center bg-white rounded-lg shadow-lg p-8 m-4">
     <h1 class="text-4xl font-extrabold text-slate-800 mb-4">ENTRENAMIENTO LECTURA SLER</h1>
     <p class="text-slate-600 max-w-lg mb-8 text-lg">
-      Bienvenido al curso. El entrenamiento se organiza en niveles progresivos distribuidos en tandas.
+      Selecciona tu punto de partida. Los niveles 1 y 2 se encuentran completamente habilitados en versión libre.
     </p>
-    <button onclick="iniciarNivel(1)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-lg shadow-md text-xl transition">
-      INICIAR CURSO (NIVEL 1)
-    </button>
+    <div class="flex gap-4">
+      <button onclick="iniciarNivel(1)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow-md text-base transition">
+        NIVEL 1 (GRATIS)
+      </button>
+      <button onclick="iniciarNivel(2)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow-md text-base transition">
+        NIVEL 2 (GRATIS)
+      </button>
+      <button onclick="iniciarNivel(3)" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-6 rounded-lg shadow-md text-base transition">
+        NIVEL 3 🔒 (PAGO)
+      </button>
+    </div>
   </div>
 
   <!-- 1.5 PANTALLA PORTADA DE NIVEL -->
@@ -115,16 +123,15 @@
       <span id="portada-tag" class="text-xs font-bold text-yellow-400 uppercase tracking-widest bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/30">
         BLOQUE DE ENTRENAMIENTO
       </span>
-      <h2 id="portada-titulo" class="text-4xl font-black text-white">NIVEL 1: INICIAL</h2>
+      <h2 id="portada-titulo" class="text-4xl font-black text-white">NIVEL 1</h2>
       <p id="portada-desc" class="text-slate-300 text-sm leading-relaxed">
-        Descripción del objetivo del nivel y configuración de patrones.
+        Descripción del objetivo del nivel.
       </p>
 
       <div class="bg-slate-900 p-4 rounded-lg border border-slate-700 text-left text-xs text-slate-300 space-y-2">
-        <div class="font-bold text-emerald-400 uppercase">Opciones y Actualizaciones del Nivel:</div>
+        <div class="font-bold text-emerald-400 uppercase">Especificaciones del Nivel:</div>
         <ul class="list-disc list-inside space-y-1 text-slate-400" id="portada-opciones">
-          <li>Secuencia silábica taquistoscópica activa.</li>
-          <li>Ajuste automático de ritmo visual.</li>
+          <li>Secuencia optimizada de lectura recíproca.</li>
         </ul>
       </div>
 
@@ -137,9 +144,8 @@
   <!-- 2. PANTALLA DE ENTRENAMIENTO -->
   <div id="pantalla-ejercicio" class="hidden-screen flex-1 flex flex-col gap-3 min-h-0">
     
-    <!-- Header de Control, Mapa General y Acceso de Prueba -->
     <div class="bg-slate-900 text-white p-3 rounded-md flex justify-between items-center px-6">
-      <span id="label-nivel" class="font-bold text-yellow-400 text-lg">NIVEL 1 (Inicial) / EJERCICIO 1</span>
+      <span id="label-nivel" class="font-bold text-yellow-400 text-lg">NIVEL 1 / EJERCICIO 1</span>
       
       <div class="flex items-center gap-4">
         <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20SLER%20-%20Soporte%20Tecnico" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs px-3 py-1.5 rounded border border-slate-600 transition flex items-center gap-1">
@@ -164,7 +170,6 @@
       </div>
     </div>
 
-    <!-- Área Principal de Visualización -->
     <div class="flex-1 flex gap-4 min-h-0">
       <div class="flex-1 bg-slate-400 rounded-md border-2 border-slate-500 flex items-center justify-center p-6 overflow-hidden">
         <div class="w-full h-full bg-white rounded flex items-center justify-center p-8 shadow-inner overflow-auto">
@@ -174,7 +179,6 @@
         </div>
       </div>
 
-      <!-- Panel de Marcas Registradas -->
       <div class="w-80 bg-slate-100 rounded-md border border-slate-300 p-4 flex flex-col">
         <h3 class="text-xs font-bold text-slate-400 uppercase border-b pb-2 mb-2">MARCAS REGISTRADAS</h3>
         <div id="lista-marcas" class="flex-1 overflow-y-auto space-y-2 text-sm font-mono">
@@ -182,7 +186,6 @@
       </div>
     </div>
 
-    <!-- Barra Inferior de Control y Cronómetro -->
     <div class="bg-slate-800 p-4 rounded-md flex justify-between items-center px-8 border-t-2 border-slate-700">
       <div id="reloj" class="text-4xl font-mono font-bold bg-black text-yellow-400 px-6 py-2 rounded-lg border border-yellow-500/30 tracking-widest shadow-inner">
         00:00:00
@@ -216,60 +219,39 @@
       </div>
 
       <p class="text-slate-300 text-base leading-relaxed max-w-xl">
-        Has completado la secuencia de entrenamiento con la metodología de lectura recíproca SLER. Tu agilidad visual y adaptación al patrón dinámico han alcanzado el nivel óptimo del curso.
+        Has recorrido con éxito las secuencias del método SLER. Continúa reforzando tu práctica mediante las extensiones de navegador oficiales.
       </p>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-left mt-2">
-        <!-- Extensión Chrome -->
         <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 flex flex-col justify-between">
           <div>
-            <h3 class="font-bold text-yellow-400 text-lg mb-2">Práctica Continua (Extensión Chrome)</h3>
+            <h3 class="font-bold text-yellow-400 text-lg mb-2">Extensión Chrome</h3>
             <p class="text-xs text-slate-300 leading-relaxed mb-4">
-              Experimenta la versión gratuita directa en tu navegador para aplicar la lectura recíproca a cualquier texto web mientras navegas.
+              Lleva la lectura recíproca directamente a tus sitios web favoritos de navegación diaria.
             </p>
           </div>
           <a href="https://chromewebstore.google.com/detail/dgildmjcbnjhpbblclglkcfhoheifilb?utm_source=item-share-cb" target="_blank" class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2 px-4 rounded text-center transition">
-            PROBAR EXTENSIÓN CHROME
+            INSTALAR EN CHROME
           </a>
         </div>
 
-     <!-- Extensión Edge -->
         <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 flex flex-col justify-between">
           <div>
-            <h3 class="font-bold text-blue-400 text-lg mb-2">Práctica Continua (Extensión Edge)</h3>
+            <h3 class="font-bold text-blue-400 text-lg mb-2">Extensión Edge</h3>
             <p class="text-xs text-slate-300 leading-relaxed mb-4">
-              Instala la extensión adaptada para Microsoft Edge y mantén el entrenamiento activo en tu navegador predeterminado.
+              Compatible con Microsoft Edge para mantener el ritmo de entrenamiento en tu navegador predeterminado.
             </p>
           </div>
           <a href="https://microsoftedge.microsoft.com/addons/search/sler" target="_blank" class="inline-block bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs py-2 px-4 rounded text-center transition">
-            PROBAR EXTENSIÓN EDGE
+            INSTALAR EN EDGE
           </a>
-        </div>
-
-      <!-- Recuadro de Transcripción Compleja & IA -->
-      <div class="w-full text-left mt-1">
-        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-emerald-400 text-lg mb-2">Transcripción Compleja & IA</h3>
-            <p class="text-xs text-slate-300 leading-relaxed mb-4">
-              Próximamente: Servicio avanzado con Inteligencia Artificial para transcripción, recolección de datos y procesamiento de libros y documentos extensos al formato SLER.
-            </p>
-          </div>
-          <span class="inline-block bg-slate-700 text-slate-400 font-bold text-xs py-2 px-4 rounded text-center border border-slate-600 w-fit">
-            PRÓXIMAMENTE
-          </span>
         </div>
       </div>
 
       <div class="pt-4 border-t border-slate-800 w-full flex flex-col items-center gap-3">
-        <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20Pedagogica%20-%20SLER" class="text-sm font-semibold text-emerald-400 hover:underline flex items-center gap-2">
-          ✉️ ¿Tienes dudas pedagógicas sobre tu avance? Escríbenos a proferibotmusic@hotmail.com
+        <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20Pedagogica%20-%20SLER" class="text-sm font-semibold text-emerald-400 hover:underline">
+          ✉️ Consultas pedagógicas y soporte: proferibotmusic@hotmail.com
         </a>
-
-        <a href="https://sler.app" target="_blank" class="text-sm font-semibold text-blue-400 hover:underline">
-          Visitar sitio web oficial: sler.app (En desarrollo)
-        </a>
-        
         <button onclick="irABienvenida()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-8 rounded-lg text-sm transition mt-2">
           REINICIAR ENTRENAMIENTO
         </button>
@@ -278,38 +260,38 @@
     </div>
   </div>
 
-  <!-- LÓGICA DE NAVEGACIÓN Y CONEXIÓN MODULAR -->
+  <!-- LÓGICA DE NAVEGACIÓN Y CONFIGURACIÓN FREEMIUM -->
   <script type="module">
     import { cargarEjercicio, manejarDisparo as disparoFirestore } from "./main.js";
 
     const infoNiveles = {
       1: {
         titulo: "NIVEL 1: INICIAL",
-        desc: "Adaptación del foco visual mediante revelado taquistoscópico y secuencias silábicas breves (Tandas 1 y 2).",
-        opciones: ["Patrón de estímulo silábico directo", "Tandas 1 y 2 (Ejercicios 1 al 21)", "Desarrollo de fijación central"],
+        desc: "Adaptación del foco visual mediante revelado taquistoscópico y secuencias silábicas breves.",
+        opciones: ["Patrón de estímulo silábico directo", "Tandas 1 y 2 (Ejercicios 1 al 21)", "Versión Free"],
         esGratis: true
       },
       2: {
         titulo: "NIVEL 2: ELEMENTAL",
-        desc: "Estructuras de oraciones con alternancia de dirección y desarrollo de fluidez (Tandas 3, 4 y 5).",
-        opciones: ["Incorporación del motor de ritmo dinámico", "Tandas 3 a 5 (Ejercicios 22 al 51)", "Control de velocidad de barrido"],
+        desc: "Estructuras de oraciones con alternancia de dirección y desarrollo de fluidez.",
+        opciones: ["Incorporación del motor de ritmo dinámico", "Tandas 3 a 5 (Ejercicios 22 al 51)", "Versión Free"],
         esGratis: true
       },
       3: {
         titulo: "NIVEL 3: INTERMEDIO",
-        desc: "Procesamiento de párrafos continuos y párrafos dobles recíprocos (Tandas 6 y 7).",
-        opciones: ["Textos de mayor densidad semántica", "Tandas 6 y 7 (Ejercicios 52 al 71)", "Consolidación de lectura recíproca"],
-        esGratis: true
+        desc: "Procesamiento de párrafos continuos y dobles recíprocos (Requiere Licencia Pro).",
+        opciones: ["Textos de mayor densidad semántica", "Tandas 6 y 7 (Ejercicios 52 al 71)", "Acreditación Pro"],
+        esGratis: false
       },
       4: {
         titulo: "NIVEL 4: AVANZADO",
-        desc: "Máximo rendimiento de lectura continua sobre bloques extensos (Tandas 8 y 9).",
-        opciones: ["Formato completo de competencia", "Tandas 8 y 9 (Ejercicios 72 al 87)", "Evaluación final de Horas de Vuelo"],
+        desc: "Máximo rendimiento de lectura continua sobre bloques extensos (Requiere Licencia Pro).",
+        opciones: ["Formato completo de competencia", "Tandas 8 y 9 (Ejercicios 72 al 87)", "Evaluación de Horas de Vuelo"],
         esGratis: false
       },
       5: {
         titulo: "NIVEL 5 (TOP): TEXTO COMPLETO",
-        desc: "Evaluación superior sobre lecturas de alta longitud y dinamismo amplio.",
+        desc: "Evaluación superior sobre lecturas de alta longitud y dinamismo amplio (Requiere Licencia Pro).",
         opciones: ["Texto de alta densidad", "Ejercicio 88", "Acreditación de lectura fluida superior"],
         esGratis: false
       }
@@ -320,7 +302,6 @@
     let ejerciciosContabilizados = 0;
     let usuarioPremium = false;
 
-    // Control del formulario inicial de Login / Registro
     window.validarAccesoUsuario = function() {
       const nombre = document.getElementById('login-nombre').value.trim();
       const email = document.getElementById('login-email').value.trim();
@@ -331,7 +312,6 @@
         return;
       }
 
-      // Si coloca un PIN válido de pago se activa el modo premium completo
       if(pin === "SLER-PRO-2026" || pin === "ADMIN-SLER") {
         usuarioPremium = true;
         alert("¡PIN válido! Acceso completo desbloqueado.");
@@ -343,7 +323,6 @@
     window.entrarModoFreemium = function() {
       const email = document.getElementById('login-email').value.trim();
       if(!email) {
-        // Rellenar un email por defecto o pedirlo rápido
         document.getElementById('login-email').value = "invitado@sler.app";
       }
       document.getElementById('pantalla-login').classList.add('hidden-screen');
@@ -363,25 +342,7 @@
 
     window.cerrarModalPago = function() {
       document.getElementById('modal-pago').classList.add('hidden-screen');
-      window.iniciarNivel(3); // Devuelve al último nivel gratuito
-    };
-
-    window.sonarCampana = function() {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(1567.98, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 1.2);
-      } catch(e) {
-        console.log("Audio no disponible:", e);
-      }
+      window.iniciarNivel(2); // Devuelve al Nivel 2
     };
 
     window.cambiarPantalla = function(idMostrar) {
@@ -398,21 +359,20 @@
     };
 
     const inicioPorTanda = {
-      1: 1,   // Tanda 1  -> Ejercicio 1
-      2: 12,  // Tanda 2  -> Ejercicio 12
-      3: 22,  // Tanda 3  -> Ejercicio 22
-      4: 32,  // Tanda 4  -> Ejercicio 32
-      5: 42,  // Tanda 5  -> Ejercicio 42
-      6: 52,  // Tanda 6  -> Ejercicio 52
-      7: 62,  // Tanda 7  -> Ejercicio 62
-      8: 72,  // Tanda 8  -> Ejercicio 72
-      9: 82,  // Tanda 9  -> Ejercicio 82
-      10: 88  // Tanda 10 -> Nivel 5 (Ej. 88)
+      1: 1,   
+      2: 12,  
+      3: 22,  
+      4: 32,  
+      5: 42,  
+      6: 52,  // Nivel 3 (Pago)
+      7: 62,  // Nivel 3 (Pago)
+      8: 72,  // Nivel 4 (Pago)
+      9: 82,  // Nivel 4 (Pago)
+      10: 88  // Nivel 5 (Pago)
     };
 
     window.saltarATanda = function(tanda) {
       const ejInicio = inicioPorTanda[tanda] || 1;
-      // Validar si la tanda corresponde a niveles de pago (> Nivel 3 / Ejercicio 52 en adelante)
       if (ejInicio >= 52 && !usuarioPremium) {
         document.getElementById('modal-pago').classList.remove('hidden-screen');
         return;
@@ -421,8 +381,8 @@
     };
 
     window.iniciarNivel = function(numNivel) {
-      // Bloquear si intenta entrar a nivel 4 o 5 sin ser premium
-      if (numNivel >= 4 && !usuarioPremium) {
+      // Bloquear si intenta entrar al Nivel 3 o superior sin ser premium
+      if (numNivel >= 3 && !usuarioPremium) {
         document.getElementById('modal-pago').classList.remove('hidden-screen');
         return;
       }
@@ -442,7 +402,7 @@
     };
 
     window.comenzarEjerciciosNivel = function() {
-      if (nivelSeleccionado >= 4 && !usuarioPremium) {
+      if (nivelSeleccionado >= 3 && !usuarioPremium) {
         document.getElementById('modal-pago').classList.remove('hidden-screen');
         return;
       }
@@ -509,7 +469,7 @@
         else if (ejAct >= 82 && ejAct <= 87) tandaActual = 9;
         else if (ejAct >= 88) tandaActual = 10;
 
-        let bloqueado = (info.t >= 8 && !usuarioPremium); // Tandas 8, 9, 10 requieren pago
+        let bloqueado = (info.t >= 6 && !usuarioPremium);
         let estadoTexto = info.t === tandaActual ? "◄ [EN CURSO]" : (info.t < tandaActual ? "✓" : "");
         if (bloqueado) estadoTexto = "🔒 [PRO]";
 
@@ -521,8 +481,7 @@
 
     window.seleccionarEjercicioGlobal = function(val) {
       const numEj = parseInt(val);
-      // Restricción si el ejercicio pertenece a los niveles de pago (A partir del 72 o Tanda 8)
-      if (numEj >= 72 && !usuarioPremium) {
+      if (numEj >= 52 && !usuarioPremium) {
         document.getElementById('modal-pago').classList.remove('hidden-screen');
         return;
       }
@@ -551,7 +510,7 @@
     };
 
     window.mostrarPantallaFinal = function() {
-      document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : (usuarioPremium ? '88' : '71')} / 88`;
+      document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : (usuarioPremium ? '88' : '51')} / 88`;
       
       const relojPrincipal = document.getElementById('reloj');
       const tiempoTotalAcumulado = relojPrincipal ? relojPrincipal.innerText : "00:00:00";

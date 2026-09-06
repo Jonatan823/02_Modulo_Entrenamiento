@@ -63,8 +63,8 @@
       </div>
 
       <div class="flex flex-col gap-2 pt-2">
-        <!-- Enlace a Mercado Pago (reemplaza el href con tu link de cobro de Mercado Pago de $1 USD) -->
-        <a href="https://link.mercadopago.com.ar/tu-link-de-pago" target="_blank" onclick="registrarSolicitudPago()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition shadow flex items-center justify-center gap-2">
+        <!-- Enlace a Mercado Pago integrado con tu link de cobro real -->
+        <a href="https://mpago.li/1uHvu2d" target="_blank" onclick="registrarSolicitudPago()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition shadow flex items-center justify-center gap-2">
           💳 PAGAR CON MERCADO PAGO ($1 USD)
         </a>
         <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-white text-xs underline py-1">
@@ -299,7 +299,6 @@
         mensaje: `El usuario ${nombre} (${email}) ha iniciado el proceso de compra por Mercado Pago ($1 USD).`
       };
 
-      // Aquí puedes usar tu template_9gypr28 o ID de plantilla de aviso
       emailjs.send('default_service', 'template_9gypr28', templateParams)
         .then(() => {
           console.log("Aviso enviado al maestro con éxito.");
@@ -437,6 +436,7 @@
     window.seleccionarEjercicioGlobal = function(val) {
       const numEj = parseInt(val);
       if (numEj >= 52 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.add('hidden-screen'); // Evita superposición
         document.getElementById('modal-pago').classList.remove('hidden-screen');
         return;
       }

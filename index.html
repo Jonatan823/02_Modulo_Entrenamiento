@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <title>SLER - Módulo de Entrenamiento Web</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SDK de EmailJS para el envío de correos automáticos -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function() {
+      emailjs.init("TU_PUBLIC_KEY"); // Reemplaza con tu Public Key de EmailJS cuando lo conectes
+    })();
+  </script>
   <style>
     body { background: #cbd5e1; margin: 0; font-family: sans-serif; }
     .hidden-screen { display: none !important; }
@@ -29,28 +36,36 @@
     </div>
   </div>
 
-  <!-- MODAL DE PAGO / FORMULARIO (Aparece al intentar pasar al Nivel 3) -->
+  <!-- MODAL DE PAGO Y CAPTURA DE DATOS (Nivel 3 en adelante) -->
   <div id="modal-pago" class="hidden-screen fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-yellow-500/40 rounded-2xl p-6 max-w-lg w-full text-center shadow-2xl space-y-4">
       <div class="inline-block bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 font-bold px-3 py-1 rounded-full text-xs uppercase tracking-widest">
-        Versión Completa Requerida
+        Acceso Completo Pro — $1 USD
       </div>
       <h3 class="text-2xl font-black text-white">Desbloquea el Nivel 3 y Avanzados</h3>
       <p class="text-slate-300 text-xs leading-relaxed">
-        Has finalizado con éxito la fase gratuita (Niveles 1 y 2). Para avanzar hacia el Nivel 3, Nivel 4 y módulos superiores, adquiere tu licencia completa o ingresa tu PIN de acceso.
+        Has completado los niveles gratuitos. Completa tus datos para registrar el pago por Mercado Pago ($1 USD) y recibir tu PIN de acceso automático.
       </p>
 
+      <!-- Formulario de datos para el pago y aviso -->
       <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 text-left space-y-3">
-        <label class="block text-xs font-bold text-slate-300 uppercase">Cargar Código / PIN de Pago:</label>
-        <div class="flex gap-2">
-          <input type="text" id="input-pin-pago" placeholder="Ej: SLER-PRO-XXXX" class="flex-1 px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs font-mono" />
-          <button onclick="canjearPinPago()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded text-xs">Validar</button>
+        <label class="block text-xs font-bold text-slate-300 uppercase">Tus Datos para la Licencia:</label>
+        <input type="text" id="pago-nombre" placeholder="Nombre y Apellido" class="w-full px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs" />
+        <input type="email" id="pago-email" placeholder="Correo electrónico para recibir el PIN" class="w-full px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs" />
+        
+        <div class="pt-2">
+          <label class="block text-xs font-bold text-slate-300 uppercase mb-1">¿Ya tienes tu PIN de Mercado Pago?</label>
+          <div class="flex gap-2">
+            <input type="text" id="input-pin-pago" placeholder="Ingresa tu PIN recibido" class="flex-1 px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs font-mono" />
+            <button onclick="canjearPinPago()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded text-xs">Validar PIN</button>
+          </div>
         </div>
       </div>
 
       <div class="flex flex-col gap-2 pt-2">
-        <a href="https://sler.app/checkout" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg text-sm transition shadow">
-          💳 COMPRAR ACCESO COMPLETO ($)
+        <!-- Enlace a Mercado Pago (reemplaza el href con tu link de cobro de Mercado Pago de $1 USD) -->
+        <a href="https://link.mercadopago.com.ar/tu-link-de-pago" target="_blank" onclick="registrarSolicitudPago()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition shadow flex items-center justify-center gap-2">
+          💳 PAGAR CON MERCADO PAGO ($1 USD)
         </a>
         <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-white text-xs underline py-1">
           Volver a los niveles gratuitos (1 y 2)
@@ -143,7 +158,6 @@
 
   <!-- 2. PANTALLA DE ENTRENAMIENTO -->
   <div id="pantalla-ejercicio" class="hidden-screen flex-1 flex flex-col gap-3 min-h-0">
-    
     <div class="bg-slate-900 text-white p-3 rounded-md flex justify-between items-center px-6">
       <span id="label-nivel" class="font-bold text-yellow-400 text-lg">NIVEL 1 / EJERCICIO 1</span>
       
@@ -218,83 +232,22 @@
         </div>
       </div>
 
-      <p class="text-slate-300 text-base leading-relaxed max-w-xl">
-        Has recorrido con éxito las secuencias del método SLER. Continúa reforzando tu práctica mediante las extensiones de navegador oficiales.
-      </p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-left mt-2">
-        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-yellow-400 text-lg mb-2">Extensión Chrome</h3>
-            <p class="text-xs text-slate-300 leading-relaxed mb-4">
-              Lleva la lectura recíproca directamente a tus sitios web favoritos de navegación diaria.
-            </p>
-          </div>
-          <a href="https://chromewebstore.google.com/detail/dgildmjcbnjhpbblclglkcfhoheifilb?utm_source=item-share-cb" target="_blank" class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2 px-4 rounded text-center transition">
-            INSTALAR EN CHROME
-          </a>
-        </div>
-
-        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-blue-400 text-lg mb-2">Extensión Edge</h3>
-            <p class="text-xs text-slate-300 leading-relaxed mb-4">
-              Compatible con Microsoft Edge para mantener el ritmo de entrenamiento en tu navegador predeterminado.
-            </p>
-          </div>
-          <a href="https://microsoftedge.microsoft.com/addons/search/sler" target="_blank" class="inline-block bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs py-2 px-4 rounded text-center transition">
-            INSTALAR EN EDGE
-          </a>
-        </div>
-      </div>
-
-      <div class="pt-4 border-t border-slate-800 w-full flex flex-col items-center gap-3">
-        <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20Pedagogica%20-%20SLER" class="text-sm font-semibold text-emerald-400 hover:underline">
-          ✉️ Consultas pedagógicas y soporte: proferibotmusic@hotmail.com
-        </a>
-        <button onclick="irABienvenida()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-8 rounded-lg text-sm transition mt-2">
-          REINICIAR ENTRENAMIENTO
-        </button>
-      </div>
-
+      <button onclick="irABienvenida()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-8 rounded-lg text-sm transition mt-2">
+        REINICIAR ENTRENAMIENTO
+      </button>
     </div>
   </div>
 
-  <!-- LÓGICA DE NAVEGACIÓN Y CONFIGURACIÓN FREEMIUM -->
+  <!-- LÓGICA DE NAVEGACIÓN Y CORREOS -->
   <script type="module">
     import { cargarEjercicio, manejarDisparo as disparoFirestore } from "./main.js";
 
     const infoNiveles = {
-      1: {
-        titulo: "NIVEL 1: INICIAL",
-        desc: "Adaptación del foco visual mediante revelado taquistoscópico y secuencias silábicas breves.",
-        opciones: ["Patrón de estímulo silábico directo", "Tandas 1 y 2 (Ejercicios 1 al 21)", "Versión Free"],
-        esGratis: true
-      },
-      2: {
-        titulo: "NIVEL 2: ELEMENTAL",
-        desc: "Estructuras de oraciones con alternancia de dirección y desarrollo de fluidez.",
-        opciones: ["Incorporación del motor de ritmo dinámico", "Tandas 3 a 5 (Ejercicios 22 al 51)", "Versión Free"],
-        esGratis: true
-      },
-      3: {
-        titulo: "NIVEL 3: INTERMEDIO",
-        desc: "Procesamiento de párrafos continuos y dobles recíprocos (Requiere Licencia Pro).",
-        opciones: ["Textos de mayor densidad semántica", "Tandas 6 y 7 (Ejercicios 52 al 71)", "Acreditación Pro"],
-        esGratis: false
-      },
-      4: {
-        titulo: "NIVEL 4: AVANZADO",
-        desc: "Máximo rendimiento de lectura continua sobre bloques extensos (Requiere Licencia Pro).",
-        opciones: ["Formato completo de competencia", "Tandas 8 y 9 (Ejercicios 72 al 87)", "Evaluación de Horas de Vuelo"],
-        esGratis: false
-      },
-      5: {
-        titulo: "NIVEL 5 (TOP): TEXTO COMPLETO",
-        desc: "Evaluación superior sobre lecturas de alta longitud y dinamismo amplio (Requiere Licencia Pro).",
-        opciones: ["Texto de alta densidad", "Ejercicio 88", "Acreditación de lectura fluida superior"],
-        esGratis: false
-      }
+      1: { titulo: "NIVEL 1: INICIAL", desc: "Adaptación del foco visual mediante revelado taquistoscópico.", opciones: ["Patrón de estímulo silábico directo", "Tandas 1 y 2 (Ejercicios 1 al 21)", "Versión Free"], esGratis: true },
+      2: { titulo: "NIVEL 2: ELEMENTAL", desc: "Estructuras de oraciones con alternancia de dirección.", opciones: ["Incorporación del motor de ritmo dinámico", "Tandas 3 a 5 (Ejercicios 22 al 51)", "Versión Free"], esGratis: true },
+      3: { titulo: "NIVEL 3: INTERMEDIO", desc: "Procesamiento de párrafos continuos (Requiere Licencia Pro).", opciones: ["Textos de mayor densidad semántica", "Tandas 6 y 7 (Ejercicios 52 al 71)", "Acreditación Pro"], esGratis: false },
+      4: { titulo: "NIVEL 4: AVANZADO", desc: "Máximo rendimiento de lectura continua (Requiere Licencia Pro).", opciones: ["Formato completo de competencia", "Tandas 8 y 9 (Ejercicios 72 al 87)", "Evaluación de Horas de Vuelo"], esGratis: false },
+      5: { titulo: "NIVEL 5 (TOP): TEXTO COMPLETO", desc: "Evaluación superior sobre lecturas de alta longitud (Requiere Licencia Pro).", opciones: ["Texto de alta densidad", "Ejercicio 88", "Acreditación superior"], esGratis: false }
     };
 
     let ejAct = 1;
@@ -328,6 +281,33 @@
       document.getElementById('pantalla-login').classList.add('hidden-screen');
     };
 
+    // Envía aviso a tu correo mediante EmailJS cuando el usuario completa sus datos en el modal de pago
+    window.registrarSolicitudPago = function() {
+      const nombre = document.getElementById('pago-nombre').value.trim();
+      const email = document.getElementById('pago-email').value.trim();
+
+      if(!nombre || !email) {
+        alert("Por favor completa tu nombre y email antes de proceder al pago.");
+        return;
+      }
+
+      // Parámetros que se envían a tu plantilla de EmailJS
+      const templateParams = {
+        to_name: "Jonatan",
+        user_name: nombre,
+        user_email: email,
+        mensaje: `El usuario ${nombre} (${email}) ha iniciado el proceso de compra por Mercado Pago ($1 USD).`
+      };
+
+      // Aquí puedes usar tu template_9gypr28 o ID de plantilla de aviso
+      emailjs.send('default_service', 'template_9gypr28', templateParams)
+        .then(() => {
+          console.log("Aviso enviado al maestro con éxito.");
+        }, (err) => {
+          console.error("Error al enviar el aviso:", err);
+        });
+    };
+
     window.canjearPinPago = function() {
       const pin = document.getElementById('input-pin-pago').value.trim();
       if(pin === "SLER-PRO-2026" || pin === "SLER-PASS") {
@@ -336,13 +316,13 @@
         document.getElementById('modal-pago').classList.add('hidden-screen');
         window.iniciarNivel(nivelSeleccionado);
       } else {
-        alert("PIN incorrecto. Adquiere tu acceso en sler.app/checkout");
+        alert("PIN incorrecto. Verifica el código enviado a tu correo tras realizar el pago.");
       }
     };
 
     window.cerrarModalPago = function() {
       document.getElementById('modal-pago').classList.add('hidden-screen');
-      window.iniciarNivel(2); // Devuelve al Nivel 2
+      window.iniciarNivel(2);
     };
 
     window.cambiarPantalla = function(idMostrar) {
@@ -358,18 +338,7 @@
       window.cambiarPantalla('pantalla-bienvenida');
     };
 
-    const inicioPorTanda = {
-      1: 1,   
-      2: 12,  
-      3: 22,  
-      4: 32,  
-      5: 42,  
-      6: 52,  // Nivel 3 (Pago)
-      7: 62,  // Nivel 3 (Pago)
-      8: 72,  // Nivel 4 (Pago)
-      9: 82,  // Nivel 4 (Pago)
-      10: 88  // Nivel 5 (Pago)
-    };
+    const inicioPorTanda = { 1: 1, 2: 12, 3: 22, 4: 32, 5: 42, 6: 52, 7: 62, 8: 72, 9: 82, 10: 88 };
 
     window.saltarATanda = function(tanda) {
       const ejInicio = inicioPorTanda[tanda] || 1;
@@ -381,7 +350,6 @@
     };
 
     window.iniciarNivel = function(numNivel) {
-      // Bloquear si intenta entrar al Nivel 3 o superior sin ser premium
       if (numNivel >= 3 && !usuarioPremium) {
         document.getElementById('modal-pago').classList.remove('hidden-screen');
         return;
@@ -427,14 +395,6 @@
         optEj.innerText = `Ej. ${i} ${i >= 52 && !usuarioPremium ? '🔒 (Pago)' : ''}`;
         selectEj.appendChild(optEj);
       }
-
-      const selectTotal = document.getElementById('select-total-tandas');
-      if (selectTotal) {
-        selectTotal.removeAttribute('disabled');
-        selectTotal.classList.remove('cursor-not-allowed', 'opacity-90');
-        selectTotal.classList.add('cursor-pointer');
-      }
-
       actualizarMapaGeneral();
     }
 
@@ -443,15 +403,10 @@
       selectTotal.innerHTML = '';
       
       const tandasInfo = [
-        { t: 1, niv: 1, rango: "1-11" },
-        { t: 2, niv: 1, rango: "12-21" },
-        { t: 3, niv: 2, rango: "22-31" },
-        { t: 4, niv: 2, rango: "32-41" },
-        { t: 5, niv: 2, rango: "42-51" },
-        { t: 6, niv: 3, rango: "52-61" },
-        { t: 7, niv: 3, rango: "62-71" },
-        { t: 8, niv: 4, rango: "72-81" },
-        { t: 9, niv: 4, rango: "82-87" },
+        { t: 1, niv: 1, rango: "1-11" }, { t: 2, niv: 1, rango: "12-21" },
+        { t: 3, niv: 2, rango: "22-31" }, { t: 4, niv: 2, rango: "32-41" }, { t: 5, niv: 2, rango: "42-51" },
+        { t: 6, niv: 3, rango: "52-61" }, { t: 7, niv: 3, rango: "62-71" },
+        { t: 8, niv: 4, rango: "72-81" }, { t: 9, niv: 4, rango: "82-87" },
         { t: 10, niv: "5 (TOP)", rango: "88" }
       ];
 
@@ -497,25 +452,10 @@
       disparoFirestore();
     };
 
-    window.registrarMarcaEnTabla = function() {
-      const reloj = document.getElementById('reloj');
-      if (reloj && reloj.innerText !== '00:00:00') {
-        ejerciciosContabilizados++;
-        const lista = document.getElementById('lista-marcas');
-        const item = document.createElement('div');
-        item.className = "flex justify-between border-b border-slate-200 pb-1 text-slate-700";
-        item.innerHTML = `<span>Ej. ${ejAct}</span><span class="text-blue-600 font-bold">${reloj.innerText}</span>`;
-        if (lista) lista.prepend(item);
-      }
-    };
-
     window.mostrarPantallaFinal = function() {
       document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : (usuarioPremium ? '88' : '51')} / 88`;
-      
       const relojPrincipal = document.getElementById('reloj');
-      const tiempoTotalAcumulado = relojPrincipal ? relojPrincipal.innerText : "00:00:00";
-      document.getElementById('stat-tiempo').innerText = tiempoTotalAcumulado;
-
+      document.getElementById('stat-tiempo').innerText = relojPrincipal ? relojPrincipal.innerText : "00:00:00";
       window.cambiarPantalla('pantalla-final');
     };
   </script>

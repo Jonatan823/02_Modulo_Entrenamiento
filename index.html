@@ -1,37 +1,172 @@
-<!-- MODAL DE PAGO Y CAPTURA DE DATOS (Nivel 3 en adelante) -->
-  <div id="modal-pago" class="hidden-screen fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-yellow-500/40 rounded-2xl p-6 max-w-lg w-full text-center shadow-2xl space-y-4">
-      <div class="inline-block bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 font-bold px-3 py-1 rounded-full text-xs uppercase tracking-widest">
-        Acceso Completo Pro — $1 USD
-      </div>
-      <h3 class="text-2xl font-black text-white">Desbloquea el Nivel 3 y Avanzados</h3>
-      <p class="text-slate-300 text-xs leading-relaxed">
-        Has completado los niveles gratuitos. Completa tus datos para registrar el pago por Mercado Pago y recibir tu PIN de acceso automático.
-      </p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación de Música</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #bb86fc;
+            --secondary-color: #03dac6;
+            --text-color: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #333333;
+        }
 
-      <!-- Formulario de datos para el pago y aviso -->
-      <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 text-left space-y-3">
-        <label class="block text-xs font-bold text-slate-300 uppercase">Tus Datos para la Licencia:</label>
-        <input type="text" id="pago-nombre" placeholder="Nombre y Apellido" class="w-full px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs" />
-        <input type="email" id="pago-email" placeholder="Correo electrónico para recibir el PIN" class="w-full px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs" />
-        
-        <div class="pt-2">
-          <label class="block text-xs font-bold text-slate-300 uppercase mb-1">¿Ya tienes tu PIN de activación?</label>
-          <div class="flex gap-2">
-            <input type="text" id="input-pin-pago" placeholder="Ingresa tu PIN recibido" class="flex-1 px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs font-mono" />
-            <button onclick="canjearPinPago()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded text-xs">Validar PIN</button>
-          </div>
-        </div>
-      </div>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
 
-      <div class="flex flex-col gap-2 pt-2">
-        <!-- Enlace apuntando a tu link real de Mercado Pago y disparando el aviso por EmailJS -->
-        <a href="https://mpago.li/1uHvu2d" target="_blank" onclick="registrarSolicitudPago()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition shadow flex items-center justify-center gap-2">
-          💳 PAGAR CON MERCADO PAGO ($1 USD)
-        </a>
-        <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-white text-xs underline py-1">
-          Volver a los niveles gratuitos (1 y 2)
-        </button>
-      </div>
-    </div>
-  </div>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        main {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: var(--secondary-color);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: #121212;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .display-area {
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px dashed var(--border-color);
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Clase de Música</h1>
+        <p>Entorno de enseñanza interactivo</p>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>Panel de Control</h2>
+            <div class="controls">
+                <button id="btnAccion1">Iniciar</button>
+                <button id="btnAccion2">Pausar</button>
+                <button id="btnAccion3">Reiniciar</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Área de Trabajo</h2>
+            <div class="display-area" id="displayArea">
+                Seleccione una opción para comenzar la actividad.
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 - Aplicación Didáctica</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnAccion1 = document.getElementById('btnAccion1');
+            const btnAccion2 = document.getElementById('btnAccion2');
+            const btnAccion3 = document.getElementById('btnAccion3');
+            const displayArea = document.getElementById('displayArea');
+
+            btnAccion1.addEventListener('click', () => {
+                displayArea.textContent = 'Actividad iniciada correctamente.';
+            });
+
+            btnAccion2.addEventListener('click', () => {
+                displayArea.textContent = 'Actividad en pausa.';
+            });
+
+            btnAccion3.addEventListener('click', () => {
+                displayArea.textContent = 'Seleccione una opción para comenzar la actividad.';
+            });
+        });
+    </script>
+</body>
+</html>

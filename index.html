@@ -10,16 +10,52 @@
   </style>
 </head>
 <body class="h-screen flex flex-col justify-between p-4 overflow-hidden">
-  <!-- PANTALLA DE LOGIN PREVIO -->
-  <div id="pantalla-login" class="hidden-screen fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
+
+  <!-- PANTALLA DE LOGIN / REGISTRO PREVIO (Adaptada y visible) -->
+  <div id="pantalla-login" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
     <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-md w-full text-center shadow-2xl">
       <h2 class="text-2xl font-bold text-white mb-2">Acceso a SLER</h2>
-      <p class="text-slate-400 text-sm mb-6">Ingresa tu correo y el código de activación enviado a tu e-mail para desbloquear el entrenamiento.</p>
+      <p class="text-slate-400 text-sm mb-6">Ingresa tus datos y el PIN de acceso o desbloquea tu modo Freemium (Niveles 1 al 3 libres).</p>
       
+      <input type="text" id="login-nombre" placeholder="Nombre y Apellido" class="w-full mb-3 px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500" />
       <input type="email" id="login-email" placeholder="tu@email.com" class="w-full mb-3 px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500" />
-      <input type="text" id="login-pin" placeholder="Código de acceso (PIN)" class="w-full mb-6 px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500 text-center font-mono tracking-widest" />
+      <input type="text" id="login-pin" placeholder="PIN de activación (Opcional si usas Freemium)" class="w-full mb-6 px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:border-emerald-500 text-center font-mono tracking-widest" />
       
-      <button onclick="validarAccesoPin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-lg transition">INGRESAR AL CURSO</button>
+      <button onclick="validarAccesoUsuario()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-lg transition shadow-lg">INGRESAR AL CURSO</button>
+      
+      <div class="mt-4 text-xs text-slate-400">
+        ¿No tienes PIN? <span onclick="entrarModoFreemium()" class="text-blue-400 cursor-pointer underline hover:text-blue-300">Entrar en Modo Freemium (Niveles 1-3)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE PAGO / UPGRADE (Aparece al intentar pasar al Nivel 4) -->
+  <div id="modal-pago" class="hidden-screen fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-yellow-500/40 rounded-2xl p-6 max-w-lg w-full text-center shadow-2xl space-y-4">
+      <div class="inline-block bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 font-bold px-3 py-1 rounded-full text-xs uppercase tracking-widest">
+        Versión Completa Requerida
+      </div>
+      <h3 class="text-2xl font-black text-white">Desbloquea el Nivel 4 y Avanzado</h3>
+      <p class="text-slate-300 text-xs leading-relaxed">
+        Has completado con éxito la fase Freemium (Niveles 1, 2 y 3). Para acceder a los bloques superiores, la certificación de horas de vuelo y herramientas IA, adquiere la licencia completa o ingresa tu PIN de pago.
+      </p>
+
+      <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 text-left space-y-3">
+        <label class="block text-xs font-bold text-slate-300 uppercase">Cargar Código / PIN de Pago:</label>
+        <div class="flex gap-2">
+          <input type="text" id="input-pin-pago" placeholder="Ej: SLER-PRO-XXXX" class="flex-1 px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs font-mono" />
+          <button onclick="canjearPinPago()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded text-xs">Validar</button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2 pt-2">
+        <a href="https://sler.app/checkout" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg text-sm transition shadow">
+          💳 COMPRAR ACCESO COMPLETO ($)
+        </a>
+        <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-white text-xs underline py-1">
+          Volver a los niveles gratuitos (1 a 3)
+        </button>
+      </div>
     </div>
   </div>
 
@@ -48,9 +84,9 @@
         </div>
 
         <div class="bg-slate-800 p-5 rounded-lg border border-slate-700">
-          <h3 class="font-bold text-emerald-400 text-sm uppercase mb-2">🚀 Actualizaciones de la Versión</h3>
+          <h3 class="font-bold text-emerald-400 text-sm uppercase mb-2">🚀 Modo Freemium Activo</h3>
           <p class="text-xs text-slate-300 leading-relaxed">
-            Integración de secuencia taquistoscópica, métricas de horas de vuelo en tiempo real y arquitectura para IA.
+            Disfruta de los Niveles 1 al 3 de forma totalmente gratuita y evalúa tu progreso en tiempo real.
           </p>
         </div>
       </div>
@@ -69,7 +105,7 @@
       Bienvenido al curso. El entrenamiento se organiza en niveles progresivos distribuidos en tandas.
     </p>
     <button onclick="iniciarNivel(1)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-lg shadow-md text-xl transition">
-      INICIAR CURSO
+      INICIAR CURSO (NIVEL 1)
     </button>
   </div>
 
@@ -210,7 +246,7 @@
           </a>
         </div>
 
-      <!-- Recuadro de Transcripción Compleja & IA (Restaurado) -->
+      <!-- Recuadro de Transcripción Compleja & IA -->
       <div class="w-full text-left mt-1">
         <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 flex flex-col justify-between">
           <div>
@@ -250,33 +286,85 @@
       1: {
         titulo: "NIVEL 1: INICIAL",
         desc: "Adaptación del foco visual mediante revelado taquistoscópico y secuencias silábicas breves (Tandas 1 y 2).",
-        opciones: ["Patrón de estímulo silábico directo", "Tandas 1 y 2 (Ejercicios 1 al 21)", "Desarrollo de fijación central"]
+        opciones: ["Patrón de estímulo silábico directo", "Tandas 1 y 2 (Ejercicios 1 al 21)", "Desarrollo de fijación central"],
+        esGratis: true
       },
       2: {
         titulo: "NIVEL 2: ELEMENTAL",
         desc: "Estructuras de oraciones con alternancia de dirección y desarrollo de fluidez (Tandas 3, 4 y 5).",
-        opciones: ["Incorporación del motor de ritmo dinámico", "Tandas 3 a 5 (Ejercicios 22 al 51)", "Control de velocidad de barrido"]
+        opciones: ["Incorporación del motor de ritmo dinámico", "Tandas 3 a 5 (Ejercicios 22 al 51)", "Control de velocidad de barrido"],
+        esGratis: true
       },
       3: {
         titulo: "NIVEL 3: INTERMEDIO",
         desc: "Procesamiento de párrafos continuos y párrafos dobles recíprocos (Tandas 6 y 7).",
-        opciones: ["Textos de mayor densidad semántica", "Tandas 6 y 7 (Ejercicios 52 al 71)", "Consolidación de lectura recíproca"]
+        opciones: ["Textos de mayor densidad semántica", "Tandas 6 y 7 (Ejercicios 52 al 71)", "Consolidación de lectura recíproca"],
+        esGratis: true
       },
       4: {
         titulo: "NIVEL 4: AVANZADO",
         desc: "Máximo rendimiento de lectura continua sobre bloques extensos (Tandas 8 y 9).",
-        opciones: ["Formato completo de competencia", "Tandas 8 y 9 (Ejercicios 72 al 87)", "Evaluación final de Horas de Vuelo"]
+        opciones: ["Formato completo de competencia", "Tandas 8 y 9 (Ejercicios 72 al 87)", "Evaluación final de Horas de Vuelo"],
+        esGratis: false
       },
       5: {
         titulo: "NIVEL 5 (TOP): TEXTO COMPLETO",
         desc: "Evaluación superior sobre lecturas de alta longitud y dinamismo amplio.",
-        opciones: ["Texto de alta densidad", "Ejercicio 88", "Acreditación de lectura fluida superior"]
+        opciones: ["Texto de alta densidad", "Ejercicio 88", "Acreditación de lectura fluida superior"],
+        esGratis: false
       }
     };
 
     let ejAct = 1;
     let nivelSeleccionado = 1;
     let ejerciciosContabilizados = 0;
+    let usuarioPremium = false;
+
+    // Control del formulario inicial de Login / Registro
+    window.validarAccesoUsuario = function() {
+      const nombre = document.getElementById('login-nombre').value.trim();
+      const email = document.getElementById('login-email').value.trim();
+      const pin = document.getElementById('login-pin').value.trim();
+
+      if(!nombre || !email) {
+        alert("Por favor completa tu nombre y correo electrónico.");
+        return;
+      }
+
+      // Si coloca un PIN válido de pago se activa el modo premium completo
+      if(pin === "SLER-PRO-2026" || pin === "ADMIN-SLER") {
+        usuarioPremium = true;
+        alert("¡PIN válido! Acceso completo desbloqueado.");
+      }
+
+      document.getElementById('pantalla-login').classList.add('hidden-screen');
+    };
+
+    window.entrarModoFreemium = function() {
+      const email = document.getElementById('login-email').value.trim();
+      if(!email) {
+        // Rellenar un email por defecto o pedirlo rápido
+        document.getElementById('login-email').value = "invitado@sler.app";
+      }
+      document.getElementById('pantalla-login').classList.add('hidden-screen');
+    };
+
+    window.canjearPinPago = function() {
+      const pin = document.getElementById('input-pin-pago').value.trim();
+      if(pin === "SLER-PRO-2026" || pin === "SLER-PASS") {
+        usuarioPremium = true;
+        alert("¡Licencia activada con éxito!");
+        document.getElementById('modal-pago').classList.add('hidden-screen');
+        window.iniciarNivel(nivelSeleccionado);
+      } else {
+        alert("PIN incorrecto. Adquiere tu acceso en sler.app/checkout");
+      }
+    };
+
+    window.cerrarModalPago = function() {
+      document.getElementById('modal-pago').classList.add('hidden-screen');
+      window.iniciarNivel(3); // Devuelve al último nivel gratuito
+    };
 
     window.sonarCampana = function() {
       try {
@@ -324,10 +412,21 @@
 
     window.saltarATanda = function(tanda) {
       const ejInicio = inicioPorTanda[tanda] || 1;
+      // Validar si la tanda corresponde a niveles de pago (> Nivel 3 / Ejercicio 52 en adelante)
+      if (ejInicio >= 52 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
       window.seleccionarEjercicioGlobal(ejInicio);
     };
 
     window.iniciarNivel = function(numNivel) {
+      // Bloquear si intenta entrar a nivel 4 o 5 sin ser premium
+      if (numNivel >= 4 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+
       nivelSeleccionado = numNivel;
       const data = infoNiveles[numNivel];
       document.getElementById('portada-titulo').innerText = data.titulo;
@@ -343,6 +442,11 @@
     };
 
     window.comenzarEjerciciosNivel = function() {
+      if (nivelSeleccionado >= 4 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+
       let ejInicio = 1;
       if (nivelSeleccionado === 2) ejInicio = 22;
       else if (nivelSeleccionado === 3) ejInicio = 52;
@@ -360,7 +464,7 @@
       for (let i = 1; i <= 88; i++) {
         const optEj = document.createElement('option');
         optEj.value = i;
-        optEj.innerText = `Ej. ${i}`;
+        optEj.innerText = `Ej. ${i} ${i >= 52 && !usuarioPremium ? '🔒 (Pago)' : ''}`;
         selectEj.appendChild(optEj);
       }
 
@@ -405,7 +509,10 @@
         else if (ejAct >= 82 && ejAct <= 87) tandaActual = 9;
         else if (ejAct >= 88) tandaActual = 10;
 
+        let bloqueado = (info.t >= 8 && !usuarioPremium); // Tandas 8, 9, 10 requieren pago
         let estadoTexto = info.t === tandaActual ? "◄ [EN CURSO]" : (info.t < tandaActual ? "✓" : "");
+        if (bloqueado) estadoTexto = "🔒 [PRO]";
+
         optTanda.innerText = `Nivel ${info.niv} — Ej. ${info.rango} ${estadoTexto}`;
         if (info.t === tandaActual) optTanda.selected = true;
         selectTotal.appendChild(optTanda);
@@ -413,7 +520,14 @@
     }
 
     window.seleccionarEjercicioGlobal = function(val) {
-      ejAct = parseInt(val);
+      const numEj = parseInt(val);
+      // Restricción si el ejercicio pertenece a los niveles de pago (A partir del 72 o Tanda 8)
+      if (numEj >= 72 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+
+      ejAct = numEj;
       const selectEj = document.getElementById('select-ejercicio-global');
       if (selectEj) selectEj.value = ejAct;
       actualizarMapaGeneral();
@@ -437,7 +551,7 @@
     };
 
     window.mostrarPantallaFinal = function() {
-      document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : 88} / 88`;
+      document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : (usuarioPremium ? '88' : '71')} / 88`;
       
       const relojPrincipal = document.getElementById('reloj');
       const tiempoTotalAcumulado = relojPrincipal ? relojPrincipal.innerText : "00:00:00";

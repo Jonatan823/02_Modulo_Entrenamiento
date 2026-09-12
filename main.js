@@ -138,7 +138,7 @@ export async function manejarDisparo() {
     if (datosEjercicioActual.tipo_flujo === "taquistoscopio") {
       await ejecutarTaquistoscopio();
     } else {
-      executarSlerLayout();
+      ejecutarSlerLayout();
     }
   } else {
     sonarCampanaFin();
@@ -294,7 +294,7 @@ async function ejecutarTaquistoscopio() {
   }
 }
 
-function executarSlerLayout() {
+function ejecutarSlerLayout() {
   const render = document.getElementById("render");
   const placeholder = document.getElementById("placeholder");
   if (placeholder) placeholder.classList.add("hidden");

@@ -103,9 +103,9 @@ function prepararVistaEjercicio() {
   const selectEj = document.getElementById("select-ejercicio-global");
 
   if (selectEj) selectEj.value = ejercicioActivoNum;
-  actualizarEncabezadoUI(`NIVEL ${datosEjercicioActual.nivel || (ejercicioActivoNum === 88 ? "5 (TOP)" : 1)} / EJERCICIO ${ejercicioActivoNum}`);
+  actualizarEncabezadoUI(`NIVEL ${datosEjercicioActual?.nivel || (ejercicioActivoNum === 88 ? "5 (TOP)" : 1)} / EJERCICIO ${ejercicioActivoNum}`);
 
-  if (datosEjercicioActual.tipo_flujo === "taquistoscopio") {
+  if (datosEjercicioActual && datosEjercicioActual.tipo_flujo === "taquistoscopio") {
     if (render) render.classList.add("hidden");
     if (placeholder) placeholder.classList.add("hidden");
     if (display) {
@@ -124,7 +124,6 @@ function prepararVistaEjercicio() {
 }
 
 export async function manejarDisparo() {
-  if (!datosEjercicioActual) return;
   const btn = document.getElementById("btn");
 
   if (estado === "start") {
@@ -135,10 +134,13 @@ export async function manejarDisparo() {
     }
     iniciarCronometro();
 
-    if (datosEjercicioActual.tipo_flujo === "taquistoscopio") {
-      await ejecutarTaquistoscopio();
-    } else {
-      ejecutarSlerLayout();
+    // Si los datos llegaron, ejecutamos el flujo correspondiente sin bloquear el inicio visual
+    if (datosEjercicioActual) {
+      if (datosEjercicioActual.tipo_flujo === "taquistoscopio") {
+        await ejecutarTaquistoscopio();
+      } else {
+        ejecutarSlerLayout();
+      }
     }
   } else {
     sonarCampanaFin();
@@ -212,7 +214,7 @@ function LanzarNotificacionTanda(numEj) {
         alert("Entrando en fase de alta densidad.\n\nAbsorción de texto completo en flujo recíproco.");
         break;
       case 88:
-        alert("¡Entrenamiento Completado!\n\Has alcanzado el máximo rendimiento del programa SLER. Recuerda que tendrás acceso abierto a la plataforma durante los próximos 7 días.");
+        alert("¡Entrenamiento Completado!\n\nHas alcanzado el máximo rendimiento del programa SLER. Recuerda que tendrás acceso abierto a la plataforma durante los próximos 7 días.");
         break;
     }
   }, 300);
@@ -253,6 +255,7 @@ function tocarFanfarriaFestejo() {
 }
 
 async function ejecutarTaquistoscopio() {
+  if (!datosEjercicioActual) return;
   const display = document.getElementById("display-sler");
   let currentPID = globalPID;
   let vel = datosEjercicioActual.velocidad_ms || 2200;
@@ -389,7 +392,7 @@ function iniciarCronometro() {
     if (reloj) {
       reloj.innerText = `00:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
     }
-  }, 200); // Se actualiza cada 200ms para reflejar el tiempo de inmediato sin bloqueos
+  }, 200);
 }
 
 function resetEstadoUI() {

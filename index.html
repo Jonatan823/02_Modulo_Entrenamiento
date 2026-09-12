@@ -261,7 +261,6 @@
         return;
       }
 
-      // LLAVE MAESTRA INVISIBLE: Si ingresas tus datos exactos, te otorga acceso total Pro en silencio
       if (nombre.toLowerCase() === "jonatan ribot" && email.toLowerCase() === "proferibotmusic@hotmail.com") {
         usuarioPremium = true;
         alert("Acceso de desarrollador reconocido. Bienvenido, Jonatan.");
@@ -281,7 +280,6 @@
       document.getElementById('pantalla-login').classList.add('hidden-screen');
     };
 
-    // Envía aviso a tu correo mediante EmailJS cuando el usuario completa sus datos en el modal de pago
     window.registrarSolicitudPago = function() {
       const nombre = document.getElementById('pago-nombre').value.trim();
       const email = document.getElementById('pago-email').value.trim();
@@ -291,7 +289,6 @@
         return;
       }
 
-      // Parámetros que se envían a tu plantilla de EmailJS
       const templateParams = {
         to_name: "Jonatan",
         user_name: nombre,
@@ -436,7 +433,7 @@
     window.seleccionarEjercicioGlobal = function(val) {
       const numEj = parseInt(val);
       if (numEj >= 52 && !usuarioPremium) {
-        document.getElementById('modal-pago').classList.add('hidden-screen'); // Evita superposición
+        document.getElementById('modal-pago').classList.add('hidden-screen');
         document.getElementById('modal-pago').classList.remove('hidden-screen');
         return;
       }
@@ -457,6 +454,32 @@
       const relojPrincipal = document.getElementById('reloj');
       document.getElementById('stat-tiempo').innerText = relojPrincipal ? relojPrincipal.innerText : "00:00:00";
       window.cambiarPantalla('pantalla-final');
+    };
+
+    let marcasHistorial = [];
+
+    window.registrarMarcaEnTabla = function() {
+      const reloj = document.getElementById('reloj');
+      const tiempoActual = reloj ? reloj.innerText : "00:00:00";
+      
+      marcasHistorial.push({
+        ejercicio: ejAct,
+        tiempo: tiempoActual
+      });
+
+      ejerciciosContabilizados = Math.max(ejerciciosContabilizados, ejAct);
+
+      const contenedorLista = document.getElementById('lista-marcas');
+      if (contenedorLista) {
+        contenedorLista.innerHTML = marcasHistorial.map((m, index) => `
+          <div class="flex justify-between items-center bg-white p-2 rounded border border-slate-200 shadow-sm text-xs">
+            <span class="font-bold text-slate-700">Ej. ${m.ejercicio}</span>
+            <span class="text-emerald-600 font-mono">${m.tiempo}</span>
+          </div>
+        `).join("");
+        
+        contenedorLista.scrollTop = contenedorLista.scrollHeight;
+      }
     };
   </script>
 </body>

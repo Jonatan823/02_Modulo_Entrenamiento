@@ -138,10 +138,10 @@ export async function manejarDisparo() {
     if (datosEjercicioActual.tipo_flujo === "taquistoscopio") {
       await ejecutarTaquistoscopio();
     } else {
-      ejecutarSlerLayout();
+      executarSlerLayout();
     }
   } else {
-    if (typeof window.sonarCampana === "function") window.sonarCampana();
+    sonarCampanaFin();
     if (typeof window.registrarMarcaEnTabla === "function") window.registrarMarcaEnTabla();
     resetEstadoUI();
 
@@ -160,6 +160,26 @@ export async function manejarDisparo() {
       if (typeof window.mostrarPantallaFinal === "function") window.mostrarPantallaFinal();
     }
   }
+}
+
+function sonarCampanaFin() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+  const ctx = new AudioContext();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(880, ctx.currentTime);
+
+  gain.gain.setValueAtTime(0.4, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + 0.8);
 }
 
 function LanzarNotificacionTanda(numEj) {
@@ -274,7 +294,7 @@ async function ejecutarTaquistoscopio() {
   }
 }
 
-function ejecutarSlerLayout() {
+function executarSlerLayout() {
   const render = document.getElementById("render");
   const placeholder = document.getElementById("placeholder");
   if (placeholder) placeholder.classList.add("hidden");
@@ -357,11 +377,13 @@ function procesarTextoSLER(texto) {
 
 function iniciarCronometro() {
   segundos = 0;
+  const reloj = document.getElementById("reloj");
+  if (reloj) reloj.innerText = "00:00:01";
+
   cronometro = setInterval(() => {
     segundos++;
     let s = segundos % 60;
     let m = Math.floor(segundos / 60);
-    const reloj = document.getElementById("reloj");
     if (reloj) reloj.innerText = `00:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   }, 1000);
 }
@@ -414,7 +436,6 @@ function verificarSesionPrevia() {
   const accesoConcedido = localStorage.getItem("sler_acceso_concedido");
   const estaValidado = localStorage.getItem("sler_usuario_validado");
 
-  // Si viene con permiso concedido desde el Portal Central o ya inició sesión previamente:
   if (accesoConcedido === "true" || estaValidado === "true") {
     ocultarPantallaLogin();
     if (!localStorage.getItem("sler_fecha_inicio")) {

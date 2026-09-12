@@ -18,7 +18,7 @@ export const db = getFirestore(app);
 let ejercicioActivoNum = 1;
 let datosEjercicioActual = null;
 let estado = "start";
-let segundos = 0;
+let tiempoInicioMs = 0;
 let cronometro = null;
 let globalPID = 0;
 const MAX_CARACTERES = 100;
@@ -212,7 +212,7 @@ function LanzarNotificacionTanda(numEj) {
         alert("Entrando en fase de alta densidad.\n\nAbsorción de texto completo en flujo recíproco.");
         break;
       case 88:
-        alert("¡Entrenamiento Completado!\n\nHas alcanzado el máximo rendimiento del programa SLER. Recuerda que tendrás acceso abierto a la plataforma durante los próximos 7 días.");
+        alert("¡Entrenamiento Completado!\n\Has alcanzado el máximo rendimiento del programa SLER. Recuerda que tendrás acceso abierto a la plataforma durante los próximos 7 días.");
         break;
     }
   }, 300);
@@ -376,21 +376,26 @@ function procesarTextoSLER(texto) {
 }
 
 function iniciarCronometro() {
-  segundos = 0;
+  tiempoInicioMs = Date.now();
   const reloj = document.getElementById("reloj");
   if (reloj) reloj.innerText = "00:00:01";
 
+  if (cronometro) clearInterval(cronometro);
+
   cronometro = setInterval(() => {
-    segundos++;
-    let s = segundos % 60;
-    let m = Math.floor(segundos / 60);
-    if (reloj) reloj.innerText = `00:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-  }, 1000);
+    const segundosTranscurridos = Math.floor((Date.now() - tiempoInicioMs) / 1000);
+    let s = segundosTranscurridos % 60;
+    let m = Math.floor(segundosTranscurridos / 60);
+    if (reloj) {
+      reloj.innerText = `00:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    }
+  }, 200); // Se actualiza cada 200ms para reflejar el tiempo de inmediato sin bloqueos
 }
 
 function resetEstadoUI() {
-  clearInterval(cronometro);
-  segundos = 0;
+  if (cronometro) clearInterval(cronometro);
+  cronometro = null;
+  tiempoInicioMs = 0;
   estado = "start";
   const reloj = document.getElementById("reloj");
   const btn = document.getElementById("btn");

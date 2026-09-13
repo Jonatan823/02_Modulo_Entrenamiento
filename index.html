@@ -311,8 +311,21 @@
     };
 
     window.canjearPinPago = function() {
-      const pin = document.getElementById('input-pin-pago').value.trim();
-      if(pin === "SLER-PRO-2026" || pin === "SLER-PASS") {
+      const inputTexto = document.getElementById('input-pin-pago').value.trim().toLowerCase();
+      const nombrePago = document.getElementById('pago-nombre').value.trim().toLowerCase().replace(/\s+/g, ' ');
+      const emailPago = document.getElementById('pago-email').value.trim().toLowerCase();
+
+      // Validación como desarrollador directo desde el modal de pago
+      if ((nombrePago === "jonatan ribot" && emailPago === "proferibotmusic@hotmail.com") || inputTexto === "slermaster" || inputTexto === "admin-sler") {
+        usuarioPremium = true;
+        alert("¡Acceso de desarrollador acreditado desde el módulo de pago!");
+        document.getElementById('modal-pago').classList.add('hidden-screen');
+        window.iniciarNivel(nivelSeleccionado);
+        return;
+      }
+
+      // Validación por PIN de Mercado Pago tradicional
+      if(inputTexto === "sler-pro-2026" || inputTexto === "sler-pass") {
         usuarioPremium = true;
         alert("¡Licencia activada con éxito!");
         document.getElementById('modal-pago').classList.add('hidden-screen');

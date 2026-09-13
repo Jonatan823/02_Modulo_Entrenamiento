@@ -252,21 +252,27 @@
     let usuarioPremium = false;
 
     window.validarAccesoUsuario = function() {
-      const nombre = document.getElementById('login-nombre').value.trim();
-      const email = document.getElementById('login-email').value.trim();
+      const nombreInput = document.getElementById('login-nombre').value.trim().toLowerCase().replace(/\s+/g, ' ');
+      const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
       const pin = document.getElementById('login-pin').value.trim();
 
-      if(!nombre || !email) {
+      if(!nombreInput || !emailInput) {
         alert("Por favor completa tu nombre y correo electrónico.");
         return;
       }
 
-      if (nombre.toLowerCase() === "jonatan ribot" && email.toLowerCase() === "proferibotmusic@hotmail.com") {
+      if (nombreInput === "jonatan ribot" && emailInput === "proferibotmusic@hotmail.com") {
         usuarioPremium = true;
         alert("Acceso de desarrollador reconocido. Bienvenido, Jonatan.");
+        document.getElementById('pantalla-login').classList.add('hidden-screen');
+        document.getElementById('modal-pago').classList.add('hidden-screen');
+        return;
       } else if (pin === "SLER-PRO-2026" || pin === "ADMIN-SLER") {
         usuarioPremium = true;
         alert("¡PIN válido! Acceso completo desbloqueado.");
+        document.getElementById('pantalla-login').classList.add('hidden-screen');
+        document.getElementById('modal-pago').classList.add('hidden-screen');
+        return;
       }
 
       document.getElementById('pantalla-login').classList.add('hidden-screen');
@@ -312,7 +318,7 @@
         document.getElementById('modal-pago').classList.add('hidden-screen');
         window.iniciarNivel(nivelSeleccionado);
       } else {
-        alert("PIN incorrecto. Verifica el código enviado a tu correo tras realizar el pago.");
+        alert("PIN incorrecto. Verifica el código enviado y reintenta.");
       }
     };
 

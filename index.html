@@ -469,11 +469,18 @@
     };
 
     window.mostrarPantallaFinal = function() {
-      document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : (usuarioPremium ? '88' : '51')} / 88`;
-      const relojPrincipal = document.getElementById('reloj');
-      document.getElementById('stat-tiempo').innerText = relojPrincipal ? relojPrincipal.innerText : "00:00:00";
+      // Muestra el número real de ejercicios alcanzados en lugar de un 88 estático
+      document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : ejAct} / 88`;
+      
+      // Inyecta el tiempo total acumulado ("Horas de Vuelo" reales)
+      if (typeof window.obtenerTiempoTotalFormateado === "function") {
+          document.getElementById('stat-tiempo').innerText = window.obtenerTiempoTotalFormateado();
+      } else {
+          document.getElementById('stat-tiempo').innerText = "00:00:00";
+      }
+
       window.cambiarPantalla('pantalla-final');
-    };
+      };
 
     let marcasHistorial = [];
 

@@ -237,6 +237,7 @@
   <!-- LÓGICA DE NAVEGACIÓN Y CORREOS -->
   <script type="module">
     import { cargarEjercicio, manejarDisparo as disparoFirestore } from "./main.js";
+    import { PacingControl } from "./pacing.js";
 
     const infoNiveles = {
       1: { titulo: "NIVEL 1: INICIAL", desc: "Adaptación del foco visual mediante revelado taquistoscópico.", opciones: ["Patrón de estímulo silábico directo", "Tandas 1 y 2 (Ejercicios 1 al 21)", "Versión Free"], esGratis: true },
@@ -315,7 +316,6 @@
       const nombrePago = document.getElementById('pago-nombre').value.trim().toLowerCase().replace(/\s+/g, ' ');
       const emailPago = document.getElementById('pago-email').value.trim().toLowerCase();
 
-      // Validación como desarrollador directo desde el modal de pago
       if ((nombrePago === "jonatan ribot" && emailPago === "proferibotmusic@hotmail.com") || inputTexto === "slermaster" || inputTexto === "admin-sler") {
         usuarioPremium = true;
         alert("¡Acceso de desarrollador acreditado desde el módulo de pago!");
@@ -324,7 +324,6 @@
         return;
       }
 
-      // Validación por PIN de Mercado Pago tradicional
       if(inputTexto === "sler-pro-2026" || inputTexto === "sler-pass") {
         usuarioPremium = true;
         alert("¡Licencia activada con éxito!");
@@ -356,7 +355,15 @@
     const inicioPorTanda = { 1: 1, 2: 12, 3: 22, 4: 32, 5: 42, 6: 52, 7: 62, 8: 72, 9: 82, 10: 88 };
 
     window.saltarATanda = function(tanda) {
-      const ejInicio = inicioPorTanda[tanda] || 1;
+      const numTanda = parseInt(tanda);
+      const validacion = PacingControl.validarAcceso(numTanda);
+      if (!validacion.permitido) {
+        alert(validacion.mensaje);
+        actualizarMapaGeneral();
+        return;
+      }
+
+      const ejInicio = inicioPorTanda[numTanda] || 1;
       if (ejInicio >= 52 && !usuarioPremium) {
         document.getElementById('modal-pago').classList.remove('hidden-screen');
         return;
@@ -396,6 +403,23 @@
       else if (nivelSeleccionado === 4) ejInicio = 72;
       else if (nivelSeleccionado === 5) ejInicio = 88;
 
+      let tandaObjetivo = 1;
+      if (ejInicio >= 12 && ejInicio <= 21) tandaObjetivo = 2;
+      else if (ejInicio >= 22 && ejInicio <= 31) tandaObjetivo = 3;
+      else if (ejInicio >= 32 && ejInicio <= 41) tandaObjetivo = 4;
+      else if (ejInicio >= 42 && ejInicio <= 51) tandaObjetivo = 5;
+      else if (ejInicio >= 52 && ejInicio <= 61) tandaObjetivo = 6;
+      else if (ejInicio >= 62 && ejInicio <= 71) tandaObjetivo = 7;
+      else if (ejInicio >= 72 && ejInicio <= 81) tandaObjetivo = 8;
+      else if (ejInicio >= 82 && ejInicio <= 87) tandaObjetivo = 9;
+      else if (ejInicio >= 88) tandaObjetivo = 10;
+
+      const validacion = PacingControl.validarAcceso(tandaObjetivo);
+      if (!validacion.permitido) {
+        alert(validacion.mensaje);
+        return;
+      }
+
       window.cambiarPantalla('pantalla-ejercicio');
       inicializarDropdowns();
       window.seleccionarEjercicioGlobal(ejInicio);
@@ -426,8 +450,6 @@
       ];
 
       tandasInfo.forEach(info => {
-        const optTanda = document.createElement('option');
-        optTanda.value = info.t;
         let tandaActual = 1;
         if (ejAct >= 12 && ejAct <= 21) tandaActual = 2;
         else if (ejAct >= 22 && ejAct <= 31) tandaActual = 3;
@@ -439,9 +461,14 @@
         else if (ejAct >= 82 && ejAct <= 87) tandaActual = 9;
         else if (ejAct >= 88) tandaActual = 10;
 
+        const validacionTanda = PacingControl.validarAcceso(info.t);
+        const optTanda = document.createElement('option');
+        optTanda.value = info.t;
+
         let bloqueado = (info.t >= 6 && !usuarioPremium);
         let estadoTexto = info.t === tandaActual ? "◄ [EN CURSO]" : (info.t < tandaActual ? "✓" : "");
         if (bloqueado) estadoTexto = "🔒 [PRO]";
+        else if (!validacionTanda.permitido) estadoTexto = "⏳ [PAUSED]";
 
         optTanda.innerText = `Nivel ${info.niv} — Ej. ${info.rango} ${estadoTexto}`;
         if (info.t === tandaActual) optTanda.selected = true;
@@ -451,6 +478,26 @@
 
     window.seleccionarEjercicioGlobal = function(val) {
       const numEj = parseInt(val);
+      
+      let tandaObjetivo = 1;
+      if (numEj >= 12 && numEj <= 21) tandaObjetivo = 2;
+      else if (numEj >= 22 && numEj <= 31) tandaObjetivo = 3;
+      else if (numEj >= 32 && numEj <= 41) tandaObjetivo = 4;
+      else if (numEj >= 42 && numEj <= 51) tandaObjetivo = 5;
+      else if (numEj >= 52 && numEj <= 61) tandaObjetivo = 6;
+      else if (numEj >= 62 && numEj <= 71) tandaObjetivo = 7;
+      else if (numEj >= 72 && numEj <= 81) tandaObjetivo = 8;
+      else if (numEj >= 82 && numEj <= 87) tandaObjetivo = 9;
+      else if (numEj >= 88) tandaObjetivo = 10;
+
+      const validacion = PacingControl.validarAcceso(tandaObjetivo);
+      if (!validacion.permitido) {
+        alert(validacion.mensaje);
+        const selectEj = document.getElementById('select-ejercicio-global');
+        if (selectEj) selectEj.value = ejAct;
+        return;
+      }
+
       if (numEj >= 52 && !usuarioPremium) {
         document.getElementById('modal-pago').classList.add('hidden-screen');
         document.getElementById('modal-pago').classList.remove('hidden-screen');
@@ -469,10 +516,8 @@
     };
 
     window.mostrarPantallaFinal = function() {
-      // Muestra el número real de ejercicios alcanzados en lugar de un 88 estático
       document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : ejAct} / 88`;
       
-      // Inyecta el tiempo total acumulado ("Horas de Vuelo" reales)
       if (typeof window.obtenerTiempoTotalFormateado === "function") {
           document.getElementById('stat-tiempo').innerText = window.obtenerTiempoTotalFormateado();
       } else {
@@ -480,7 +525,7 @@
       }
 
       window.cambiarPantalla('pantalla-final');
-      };
+    };
 
     let marcasHistorial = [];
 

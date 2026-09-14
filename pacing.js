@@ -19,8 +19,10 @@ export const PacingControl = {
     },
 
     validarAcceso: function(tandaObjetivo) {
+        // Verificamos si es admin mediante localStorage, window o la variable global del index
         const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || 
-                        (typeof window !== 'undefined' && window.usuarioEsAdmin === true);
+                        (typeof window !== 'undefined' && window.usuarioEsAdmin === true) ||
+                        (typeof window !== 'undefined' && window.usuarioPremium === true);
 
         const estado = this.obtenerEstado();
         const dias = estado.dias;
@@ -28,7 +30,8 @@ export const PacingControl = {
         // Regla 1: Plazo máximo global de 7 días
         if (dias > 7) {
             if (esAdmin) {
-                alert("[EFECTO FANTASMA] Simulación: Fin de plazo de 7 días (Admin con pase libre).");
+                // Silenciamos el alert intrusivo para que no moleste en tu uso diario, 
+                // pero permitimos el paso libre absoluto.
                 return { permitido: true };
             }
             return { 
@@ -40,7 +43,6 @@ export const PacingControl = {
         // Regla 2: Día 1 - Máximo 50% (Tandas 1 a 5 / Ejercicios 1 a 51)
         if (dias < 1 && tandaObjetivo > 5) {
             if (esAdmin) {
-                alert("[EFECTO FANTASMA] Simulación: Límite diario del 50% alcanzado (Tanda " + tandaObjetivo + "). Acceso concedido por rol admin.");
                 return { permitido: true };
             }
             return { 
@@ -52,7 +54,6 @@ export const PacingControl = {
         // Regla 3: Tanda 10 reservada para el Día 3 en adelante (mínimo 48h transcurridas)
         if (tandaObjetivo === 10 && dias < 2) {
             if (esAdmin) {
-                alert("[EFECTO FANTASMA] Simulación: Tanda 10 requiere 3 días. Acceso concedido por rol admin.");
                 return { permitido: true };
             }
             return { 

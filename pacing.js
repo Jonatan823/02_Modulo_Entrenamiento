@@ -1,5 +1,5 @@
 // pacing.js - Control de tiempos y límites (3 a 7 días)
-import { db } from "./main.js"; // Reutilizamos la instancia centralizada de Firestore
+import { db } from "./main.js";
 
 export const PacingControl = {
     obtenerEstado: function() {
@@ -19,6 +19,12 @@ export const PacingControl = {
     },
 
     validarAcceso: function(tandaObjetivo) {
+        // INTERRUPTOR DE ADMIN: Si estás en modo desarrollador/admin, bypass total
+        const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || typeof window.usuarioPremium !== 'undefined' && window.usuarioPremium;
+        if (esAdmin) {
+            return { permitido: true };
+        }
+
         const estado = this.obtenerEstado();
         const dias = estado.dias;
 

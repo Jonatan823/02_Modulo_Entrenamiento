@@ -8,7 +8,7 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
     (function() {
-      emailjs.init("TU_PUBLIC_KEY"); // Reemplaza con tu Public Key de EmailJS cuando lo conectes
+      emailjs.init("TU_PUBLIC_KEY");
     })();
   </script>
   <style>
@@ -47,7 +47,6 @@
         Has completado los niveles gratuitos. Completa tus datos para registrar el pago por Mercado Pago ($1 USD) y recibir tu PIN de acceso automático.
       </p>
 
-      <!-- Formulario de datos para el pago y aviso -->
       <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 text-left space-y-3">
         <label class="block text-xs font-bold text-slate-300 uppercase">Tus Datos para la Licencia:</label>
         <input type="text" id="pago-nombre" placeholder="Nombre y Apellido" class="w-full px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs" />
@@ -63,7 +62,6 @@
       </div>
 
       <div class="flex flex-col gap-2 pt-2">
-        <!-- Enlace a Mercado Pago integrado con tu link de cobro real -->
         <a href="https://mpago.li/1uHvu2d" target="_blank" onclick="registrarSolicitudPago()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition shadow flex items-center justify-center gap-2">
           💳 PAGAR CON MERCADO PAGO ($1 USD)
         </a>
@@ -74,7 +72,7 @@
     </div>
   </div>
 
-  <!-- 0. PANTALLA INICIAL AUSPICIOSA (VERSIÓN FREE / FREEMIUM) -->
+  <!-- 0. PANTALLA INICIAL AUSPICIOSA -->
   <div id="pantalla-presentacion" class="flex flex-col items-center justify-center flex-1 bg-slate-900 text-white rounded-lg shadow-2xl p-8 m-4 overflow-y-auto">
     <div class="max-w-3xl w-full flex flex-col items-center text-center space-y-6">
       
@@ -356,17 +354,15 @@
 
     window.saltarATanda = function(tanda) {
       const numTanda = parseInt(tanda);
-      const validacion = PacingControl.validarAcceso(numTanda);
-      if (!validacion.permitido) {
-        alert(validacion.mensaje);
-        actualizarMapaGeneral();
-        return;
-      }
-
       const ejInicio = inicioPorTanda[numTanda] || 1;
+      
       if (ejInicio >= 52 && !usuarioPremium) {
-        document.getElementById('modal-pago').classList.remove('hidden-screen');
-        return;
+        const validacion = PacingControl.validarAcceso(numTanda);
+        if (!validacion.permitido) {
+          document.getElementById('modal-pago').classList.remove('hidden-screen');
+          actualizarMapaGeneral();
+          return;
+        }
       }
       window.seleccionarEjercicioGlobal(ejInicio);
     };
@@ -402,23 +398,6 @@
       else if (nivelSeleccionado === 3) ejInicio = 52;
       else if (nivelSeleccionado === 4) ejInicio = 72;
       else if (nivelSeleccionado === 5) ejInicio = 88;
-
-      let tandaObjetivo = 1;
-      if (ejInicio >= 12 && ejInicio <= 21) tandaObjetivo = 2;
-      else if (ejInicio >= 22 && ejInicio <= 31) tandaObjetivo = 3;
-      else if (ejInicio >= 32 && ejInicio <= 41) tandaObjetivo = 4;
-      else if (ejInicio >= 42 && ejInicio <= 51) tandaObjetivo = 5;
-      else if (ejInicio >= 52 && ejInicio <= 61) tandaObjetivo = 6;
-      else if (ejInicio >= 62 && ejInicio <= 71) tandaObjetivo = 7;
-      else if (ejInicio >= 72 && ejInicio <= 81) tandaObjetivo = 8;
-      else if (ejInicio >= 82 && ejInicio <= 87) tandaObjetivo = 9;
-      else if (ejInicio >= 88) tandaObjetivo = 10;
-
-      const validacion = PacingControl.validarAcceso(tandaObjetivo);
-      if (!validacion.permitido) {
-        alert(validacion.mensaje);
-        return;
-      }
 
       window.cambiarPantalla('pantalla-ejercicio');
       inicializarDropdowns();
@@ -461,14 +440,17 @@
         else if (ejAct >= 82 && ejAct <= 87) tandaActual = 9;
         else if (ejAct >= 88) tandaActual = 10;
 
-        const validacionTanda = PacingControl.validarAcceso(info.t);
         const optTanda = document.createElement('option');
         optTanda.value = info.t;
 
-        let bloqueado = (info.t >= 6 && !usuarioPremium);
-        let estadoTexto = info.t === tandaActual ? "◄ [EN CURSO]" : (info.t < tandaActual ? "✓" : "");
-        if (bloqueado) estadoTexto = "🔒 [PRO]";
-        else if (!validacionTanda.permitido) estadoTexto = "⏳ [PAUSED]";
+        let estadoTexto = "";
+        if (info.t === tandaActual) {
+          estadoTexto = "◄ [EN CURSO]";
+        } else if (info.t < tandaActual) {
+          estadoTexto = "✓";
+        } else if (info.t >= 6 && !usuarioPremium) {
+          estadoTexto = "🔒 [PRO]";
+        }
 
         optTanda.innerText = `Nivel ${info.niv} — Ej. ${info.rango} ${estadoTexto}`;
         if (info.t === tandaActual) optTanda.selected = true;
@@ -490,18 +472,15 @@
       else if (numEj >= 82 && numEj <= 87) tandaObjetivo = 9;
       else if (numEj >= 88) tandaObjetivo = 10;
 
-      const validacion = PacingControl.validarAcceso(tandaObjetivo);
-      if (!validacion.permitido) {
-        alert(validacion.mensaje);
-        const selectEj = document.getElementById('select-ejercicio-global');
-        if (selectEj) selectEj.value = ejAct;
-        return;
-      }
-
       if (numEj >= 52 && !usuarioPremium) {
-        document.getElementById('modal-pago').classList.add('hidden-screen');
-        document.getElementById('modal-pago').classList.remove('hidden-screen');
-        return;
+        const validacion = PacingControl.validarAcceso(tandaObjetivo);
+        if (!validacion.permitido) {
+          document.getElementById('modal-pago').classList.remove('hidden-screen');
+          const selectEj = document.getElementById('select-ejercicio-global');
+          if (selectEj) selectEj.value = ejAct;
+          actualizarMapaGeneral();
+          return;
+        }
       }
 
       ejAct = numEj;

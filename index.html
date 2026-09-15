@@ -248,7 +248,7 @@
     let ejAct = 1;
     let nivelSeleccionado = 1;
     let ejerciciosContabilizados = 0;
-    let usuarioPremium = false;
+    let usuarioPremium = localStorage.getItem('sler_modo_admin') === 'true';
 
     window.validarAccesoUsuario = function() {
       const nombreInput = document.getElementById('login-nombre').value.trim().toLowerCase().replace(/\s+/g, ' ');
@@ -262,12 +262,14 @@
 
       if (nombreInput === "jonatan ribot" && emailInput === "proferibotmusic@hotmail.com") {
         usuarioPremium = true;
+        localStorage.setItem('sler_modo_admin', 'true');
         alert("Acceso de desarrollador reconocido. Bienvenido, Jonatan.");
         document.getElementById('pantalla-login').classList.add('hidden-screen');
         document.getElementById('modal-pago').classList.add('hidden-screen');
         return;
       } else if (pin === "SLER-PRO-2026" || pin === "ADMIN-SLER") {
         usuarioPremium = true;
+        localStorage.setItem('sler_modo_admin', 'true');
         alert("¡PIN válido! Acceso completo desbloqueado.");
         document.getElementById('pantalla-login').classList.add('hidden-screen');
         document.getElementById('modal-pago').classList.add('hidden-screen');
@@ -316,6 +318,7 @@
 
       if ((nombrePago === "jonatan ribot" && emailPago === "proferibotmusic@hotmail.com") || inputTexto === "slermaster" || inputTexto === "admin-sler") {
         usuarioPremium = true;
+        localStorage.setItem('sler_modo_admin', 'true');
         alert("¡Acceso de desarrollador acreditado desde el módulo de pago!");
         document.getElementById('modal-pago').classList.add('hidden-screen');
         window.iniciarNivel(nivelSeleccionado);
@@ -324,6 +327,7 @@
 
       if(inputTexto === "sler-pro-2026" || inputTexto === "sler-pass") {
         usuarioPremium = true;
+        localStorage.setItem('sler_modo_admin', 'true');
         alert("¡Licencia activada con éxito!");
         document.getElementById('modal-pago').classList.add('hidden-screen');
         window.iniciarNivel(nivelSeleccionado);
@@ -355,8 +359,9 @@
     window.saltarATanda = function(tanda) {
       const numTanda = parseInt(tanda);
       const ejInicio = inicioPorTanda[numTanda] || 1;
+      const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || usuarioPremium;
       
-      if (ejInicio >= 52 && !usuarioPremium) {
+      if (ejInicio >= 52 && !esAdmin) {
         const progreso = PacingControl.obtenerProgresoSesion();
         if (progreso.ejercicioMaximo < 51) {
           alert("Acceso denegado. Debes completar la secuencia de la escalera gratuita de forma estrictamente secuencial.");
@@ -369,7 +374,8 @@
     };
 
     window.iniciarNivel = function(numNivel) {
-      if (numNivel >= 3 && !usuarioPremium) {
+      const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || usuarioPremium;
+      if (numNivel >= 3 && !esAdmin) {
         const progreso = PacingControl.obtenerProgresoSesion();
         if (progreso.ejercicioMaximo < 51) {
           alert("Para acceder a este nivel avanzado, completa la escalera de entrenamiento de forma progresiva.");
@@ -392,7 +398,8 @@
     };
 
     window.comenzarEjerciciosNivel = function() {
-      if (nivelSeleccionado >= 3 && !usuarioPremium) {
+      const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || usuarioPremium;
+      if (nivelSeleccionado >= 3 && !esAdmin) {
         const progreso = PacingControl.obtenerProgresoSesion();
         if (progreso.ejercicioMaximo < 51) {
           alert("Para comenzar este nivel, completa los ejercicios anteriores de la escalera.");
@@ -414,10 +421,11 @@
     function inicializarDropdowns() {
       const selectEj = document.getElementById('select-ejercicio-global');
       selectEj.innerHTML = '';
+      const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || usuarioPremium;
       for (let i = 1; i <= 88; i++) {
         const optEj = document.createElement('option');
         optEj.value = i;
-        optEj.innerText = `Ej. ${i} ${i >= 52 && !usuarioPremium ? '🔒' : ''}`;
+        optEj.innerText = `Ej. ${i} ${i >= 52 && !esAdmin ? '🔒' : ''}`;
         selectEj.appendChild(optEj);
       }
       actualizarMapaGeneral();
@@ -426,6 +434,7 @@
     function actualizarMapaGeneral() {
       const selectTotal = document.getElementById('select-total-tandas');
       selectTotal.innerHTML = '';
+      const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || usuarioPremium;
       
       const tandasInfo = [
         { t: 1, niv: 1, rango: "1-11" }, { t: 2, niv: 1, rango: "12-21" },
@@ -455,7 +464,7 @@
           estadoTexto = "◄ [EN CURSO]";
         } else if (info.t < tandaActual) {
           estadoTexto = "✓";
-        } else if (info.t >= 6 && !usuarioPremium) {
+        } else if (info.t >= 6 && !esAdmin) {
           estadoTexto = "🔒";
         }
 
@@ -467,6 +476,7 @@
 
     window.seleccionarEjercicioGlobal = function(val) {
       const numEj = parseInt(val);
+      const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || usuarioPremium;
       
       let tandaObjetivo = 1;
       if (numEj >= 12 && numEj <= 21) tandaObjetivo = 2;
@@ -479,7 +489,7 @@
       else if (numEj >= 82 && numEj <= 87) tandaObjetivo = 9;
       else if (numEj >= 88) tandaObjetivo = 10;
 
-      if (numEj >= 52 && !usuarioPremium) {
+      if (numEj >= 52 && !esAdmin) {
         const progreso = PacingControl.obtenerProgresoSesion();
         if (progreso.ejercicioMaximo < 51) {
           alert("Acceso denegado. Debes completar la secuencia de la escalera gratuita de forma estrictamente secuencial.");

@@ -357,10 +357,12 @@
       const ejInicio = inicioPorTanda[numTanda] || 1;
       
       if (ejInicio >= 52 && !usuarioPremium) {
-        const validacion = PacingControl.validarAcceso(numTanda);
-        if (!validacion.permitido) {
-          document.getElementById('modal-pago').classList.remove('hidden-screen');
-          actualizarMapaGeneral();
+        const progreso = PacingControl.obtenerProgresoSesion();
+        // Si intenta saltar al contenido avanzado sin completar la escalera real, bloqueamos con aviso sin mostrar pago forzado
+        if (progreso.ejercicioMaximo < 51) {
+          alert("Acceso denegado. Debes completar la secuencia de la escalera gratuita de forma estrictamente secuencial.");
+          const selectTotal = document.getElementById('select-total-tandas');
+          if (selectTotal) actualizarMapaGeneral();
           return;
         }
       }
@@ -369,8 +371,11 @@
 
     window.iniciarNivel = function(numNivel) {
       if (numNivel >= 3 && !usuarioPremium) {
-        document.getElementById('modal-pago').classList.remove('hidden-screen');
-        return;
+        const progreso = PacingControl.obtenerProgresoSesion();
+        if (progreso.ejercicioMaximo < 51) {
+          alert("Para acceder a este nivel avanzado, completa la escalera de entrenamiento de forma progresiva.");
+          return;
+        }
       }
 
       nivelSeleccionado = numNivel;
@@ -389,8 +394,11 @@
 
     window.comenzarEjerciciosNivel = function() {
       if (nivelSeleccionado >= 3 && !usuarioPremium) {
-        document.getElementById('modal-pago').classList.remove('hidden-screen');
-        return;
+        const progreso = PacingControl.obtenerProgresoSesion();
+        if (progreso.ejercicioMaximo < 51) {
+          alert("Para comenzar este nivel, completa los ejercicios anteriores de la escalera.");
+          return;
+        }
       }
 
       let ejInicio = 1;
@@ -410,7 +418,7 @@
       for (let i = 1; i <= 88; i++) {
         const optEj = document.createElement('option');
         optEj.value = i;
-        optEj.innerText = `Ej. ${i} ${i >= 52 && !usuarioPremium ? '🔒 (Pago)' : ''}`;
+        optEj.innerText = `Ej. ${i} ${i >= 52 && !usuarioPremium ? '🔒' : ''}`;
         selectEj.appendChild(optEj);
       }
       actualizarMapaGeneral();
@@ -449,7 +457,7 @@
         } else if (info.t < tandaActual) {
           estadoTexto = "✓";
         } else if (info.t >= 6 && !usuarioPremium) {
-          estadoTexto = "🔒 [PRO]";
+          estadoTexto = "🔒";
         }
 
         optTanda.innerText = `Nivel ${info.niv} — Ej. ${info.rango} ${estadoTexto}`;
@@ -473,9 +481,10 @@
       else if (numEj >= 88) tandaObjetivo = 10;
 
       if (numEj >= 52 && !usuarioPremium) {
-        const validacion = PacingControl.validarAcceso(tandaObjetivo);
-        if (!validacion.permitido) {
-          document.getElementById('modal-pago').classList.remove('hidden-screen');
+        const progreso = PacingControl.obtenerProgresoSesion();
+        // Validación estricta: si intenta saltar directo sin hacer la escalera real, bloqueamos con alerta limpia
+        if (progreso.ejercicioMaximo < 51) {
+          alert("Acceso denegado. Debes completar la secuencia de la escalera gratuita de forma estrictamente secuencial.");
           const selectEj = document.getElementById('select-ejercicio-global');
           if (selectEj) selectEj.value = ejAct;
           actualizarMapaGeneral();

@@ -1,4 +1,4 @@
-// main.js - Lógica central del módulo de entrenamiento SLER con pacing, sesión estricta y redirección promocional
+// main.js - Lógica central del módulo de entrenamiento SLER con bypass administrativo total
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { PacingControl } from "./pacing.js";
@@ -23,7 +23,6 @@ let estado = "start";
 let tiempoInicioMs = 0;
 let cronometro = null;
 let globalPID = 0;
-const MAX_CARACTERES = 100;
 
 // Variables globales para el control de "Tiempo Congelado" y "Horas de Vuelo"
 let tiempoTotalAcumuladoSegundos = parseInt(localStorage.getItem("sler_tiempo_total") || "0");
@@ -44,21 +43,24 @@ function obtenerTandaPorEjercicio(numEj) {
 
 function verificarAccesoPacing(numEj) {
     const tanda = obtenerTandaPorEjercicio(numEj);
+    
+    // Verificación robusta de administrador / usuario premium (Bypass total)
     const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || 
+                    localStorage.getItem('sler_usuario_premium') === 'true' ||
                     (typeof window !== 'undefined' && window.usuarioEsAdmin === true) ||
                     (typeof window !== 'undefined' && window.usuarioPremium === true);
 
-    // Si intenta saltar a niveles avanzados (Tanda 3 en adelante / Ejercicios > 21) sin ser admin
-    if (!esAdmin && numEj > 21) {
+    // Si es administrador, se omiten todas las restricciones de la escalera
+    if (esAdmin) {
+        return true;
+    }
+
+    // Si intenta saltar a niveles avanzados sin ser admin
+    if (numEj > 21) {
         const progreso = PacingControl.obtenerProgresoSesion();
-        
-        // Si no ha completado secuencialmente la escalera gratuita hasta el ejercicio 21
         if (progreso.ejercicioMaximo < 21) {
-            // Mostrar la pantalla promocional / infografía en lugar del modal de pago forzado
             if (typeof window.mostrarPantallaPromocionGeneral === "function") {
                 window.mostrarPantallaPromocionGeneral();
-            } else {
-                console.warn("Pantalla de promoción general no definida globalmente.");
             }
             return false;
         }
@@ -132,6 +134,7 @@ function prepararVistaEjercicio() {
 
 export async function manejarDisparo() {
   const btn = document.getElementById("btn");
+  const esAdmin = localStorage.getItem('sler_modo_admin') === 'true';
 
   if (estado === "start") {
     estado = "stop";
@@ -149,21 +152,20 @@ export async function manejarDisparo() {
       }
     }
   } else {
-    // REGLA DE SEGURIDAD: Validar duración mínima de 3 segundos por ejercicio
     const segundosTranscurridosActual = Math.floor((Date.now() - tiempoInicioMs) / 1000);
-    if (segundosTranscurridosActual < 3) {
+    
+    // REGLA DE SEGURIDAD: Eximir al admin de la espera de 3 segundos si está testeando rápido
+    if (segundosTranscurridosActual < 3 && !esAdmin) {
       alert("Demasiado rápido. Debes permanecer al menos 3 segundos procesando el estímulo visual antes de finalizar el ejercicio.");
       return;
     }
 
-    // Acumular tiempo de este ejercicio al total global ("Tiempo Congelado")
     tiempoTotalAcumuladoSegundos += segundosTranscurridosActual;
     localStorage.setItem("sler_tiempo_total", tiempoTotalAcumuladoSegundos);
 
     sonarCampanaFin();
     if (typeof window.registrarMarcaEnTabla === "function") window.registrarMarcaEnTabla(segundosTranscurridosActual);
     
-    // Actualizar progreso secuencial en sessionStorage para usuarios no admin
     PacingControl.actualizarProgresoSesion(ejercicioActivoNum + 1);
 
     resetEstadoUI();

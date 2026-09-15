@@ -1,4 +1,4 @@
-// main.js - Lógica central del módulo de entrenamiento SLER con pacing y sesión estricta
+// main.js - Lógica central del módulo de entrenamiento SLER con pacing, sesión estricta y redirección promocional
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { PacingControl } from "./pacing.js";
@@ -44,6 +44,26 @@ function obtenerTandaPorEjercicio(numEj) {
 
 function verificarAccesoPacing(numEj) {
     const tanda = obtenerTandaPorEjercicio(numEj);
+    const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || 
+                    (typeof window !== 'undefined' && window.usuarioEsAdmin === true) ||
+                    (typeof window !== 'undefined' && window.usuarioPremium === true);
+
+    // Si intenta saltar a niveles avanzados (Tanda 3 en adelante / Ejercicios > 21) sin ser admin
+    if (!esAdmin && numEj > 21) {
+        const progreso = PacingControl.obtenerProgresoSesion();
+        
+        // Si no ha completado secuencialmente la escalera gratuita hasta el ejercicio 21
+        if (progreso.ejercicioMaximo < 21) {
+            // Mostrar la pantalla promocional / infografía en lugar del modal de pago forzado
+            if (typeof window.mostrarPantallaPromocionGeneral === "function") {
+                window.mostrarPantallaPromocionGeneral();
+            } else {
+                console.warn("Pantalla de promoción general no definida globalmente.");
+            }
+            return false;
+        }
+    }
+
     const validacion = PacingControl.validarAcceso(tanda, numEj);
     if (!validacion.permitido) {
         alert(validacion.mensaje);

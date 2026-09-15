@@ -1,3 +1,4 @@
+// main.js - Lógica central del módulo de entrenamiento SLER con pacing y sesión estricta
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { PacingControl } from "./pacing.js";
@@ -43,7 +44,7 @@ function obtenerTandaPorEjercicio(numEj) {
 
 function verificarAccesoPacing(numEj) {
     const tanda = obtenerTandaPorEjercicio(numEj);
-    const validacion = PacingControl.validarAcceso(tanda);
+    const validacion = PacingControl.validarAcceso(tanda, numEj);
     if (!validacion.permitido) {
         alert(validacion.mensaje);
         return false;
@@ -141,6 +142,10 @@ export async function manejarDisparo() {
 
     sonarCampanaFin();
     if (typeof window.registrarMarcaEnTabla === "function") window.registrarMarcaEnTabla(segundosTranscurridosActual);
+    
+    // Actualizar progreso secuencial en sessionStorage para usuarios no admin
+    PacingControl.actualizarProgresoSesion(ejercicioActivoNum + 1);
+
     resetEstadoUI();
 
     LanzarNotificacionTanda(ejercicioActivoNum);
@@ -291,7 +296,6 @@ function actualizarEncabezadoUI(texto) {
   if (label) label.innerText = texto;
 }
 
-// Función auxiliar para exportar el tiempo total formateado a la pantalla final
 window.obtenerTiempoTotalFormateado = function() {
     let totalSegs = parseInt(localStorage.getItem("sler_tiempo_total") || "0");
     let h = Math.floor(totalSegs / 3600);

@@ -328,7 +328,7 @@
         document.getElementById('modal-pago').classList.add('hidden-screen');
         window.iniciarNivel(nivelSeleccionado);
       } else {
-        alert("PIN incorrecto. Verifica el código enviado y reintenta.");
+        alert("PIN incorrecto. Verifica el código recibido y reintenta.");
       }
     };
 
@@ -358,7 +358,6 @@
       
       if (ejInicio >= 52 && !usuarioPremium) {
         const progreso = PacingControl.obtenerProgresoSesion();
-        // Si intenta saltar al contenido avanzado sin completar la escalera real, bloqueamos con aviso sin mostrar pago forzado
         if (progreso.ejercicioMaximo < 51) {
           alert("Acceso denegado. Debes completar la secuencia de la escalera gratuita de forma estrictamente secuencial.");
           const selectTotal = document.getElementById('select-total-tandas');
@@ -482,7 +481,6 @@
 
       if (numEj >= 52 && !usuarioPremium) {
         const progreso = PacingControl.obtenerProgresoSesion();
-        // Validación estricta: si intenta saltar directo sin hacer la escalera real, bloqueamos con alerta limpia
         if (progreso.ejercicioMaximo < 51) {
           alert("Acceso denegado. Debes completar la secuencia de la escalera gratuita de forma estrictamente secuencial.");
           const selectEj = document.getElementById('select-ejercicio-global');

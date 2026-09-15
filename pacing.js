@@ -1,4 +1,4 @@
-// pacing.js - Control de tiempos y límites (3 a 7 días)
+// pacing.js - Control de tiempos, límites y secuencia pedagógica por sesión
 import { db } from "./main.js";
 
 export const PacingControl = {
@@ -18,11 +18,39 @@ export const PacingControl = {
         };
     },
 
-    validarAcceso: function(tandaObjetivo) {
-        // Verificamos si es admin mediante localStorage, window o la variable global del index
+    obtenerProgresoSesion: function() {
+        let progreso = sessionStorage.getItem('sler_progreso_sesion');
+        if (!progreso) {
+            const estadoInicial = { ejercicioMaximo: 1 };
+            sessionStorage.setItem('sler_progreso_sesion', JSON.stringify(estadoInicial));
+            return estadoInicial;
+        }
+        return JSON.parse(progreso);
+    },
+
+    actualizarProgresoSesion: function(numEj) {
+        let progreso = this.obtenerProgresoSesion();
+        if (numEj > progreso.ejercicioMaximo) {
+            progreso.ejercicioMaximo = numEj;
+            sessionStorage.setItem('sler_progreso_sesion', JSON.stringify(progreso));
+        }
+    },
+
+    validarAcceso: function(tandaObjetivo, numEjercicioObjetivo = 1) {
         const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || 
                         (typeof window !== 'undefined' && window.usuarioEsAdmin === true) ||
                         (typeof window !== 'undefined' && window.usuarioPremium === true);
+
+        // Regla 0: Secuencia obligatoria estricta para usuario no admin (vía sessionStorage)
+        if (!esAdmin && numEjercicioObjetivo > 1) {
+            const progreso = this.obtenerProgresoSesion();
+            if (numEjercicioObjetivo > progreso.ejercicioMaximo + 1) {
+                return { 
+                    permitido: false, 
+                    mensaje: "Acceso denegado. Debes completar los ejercicios anteriores de forma estrictamente secuencial." 
+                };
+            }
+        }
 
         const estado = this.obtenerEstado();
         const dias = estado.dias;
@@ -30,8 +58,7 @@ export const PacingControl = {
         // Regla 1: Plazo máximo global de 7 días
         if (dias > 7) {
             if (esAdmin) {
-                // Silenciamos el alert intrusivo para que no moleste en tu uso diario, 
-                // pero permitimos el paso libre absoluto.
+                alert("[EFECTO FANTASMA] Simulación: Fin de plazo de 7 días (Admin con pase libre).");
                 return { permitido: true };
             }
             return { 
@@ -43,6 +70,7 @@ export const PacingControl = {
         // Regla 2: Día 1 - Máximo 50% (Tandas 1 a 5 / Ejercicios 1 a 51)
         if (dias < 1 && tandaObjetivo > 5) {
             if (esAdmin) {
+                alert("[EFECTO FANTASMA] Simulación: Límite diario del 50% alcanzado (Tanda " + tandaObjetivo + "). Acceso concedido por rol admin.");
                 return { permitido: true };
             }
             return { 
@@ -54,6 +82,7 @@ export const PacingControl = {
         // Regla 3: Tanda 10 reservada para el Día 3 en adelante (mínimo 48h transcurridas)
         if (tandaObjetivo === 10 && dias < 2) {
             if (esAdmin) {
+                alert("[EFECTO FANTASMA] Simulación: Tanda 10 requiere 3 días. Acceso concedido por rol admin.");
                 return { permitido: true };
             }
             return { 

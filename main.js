@@ -276,35 +276,37 @@ function ejecutarSlerLayout() {
       render.innerHTML = datosEjercicioActual.lineas.map((l) => {
         const esPar = l.tipo === "C";
         return `
-          <div class="linea-sler-wrapper" style="text-align: ${esPar ? 'right' : 'left'}; width: 100%; margin-bottom: 10px; overflow: hidden;">
-            <span class="linea-texto-dinamico" style="display: inline-block; color: ${esPar ? '#1e40af' : '#0f172a'}; font-family: monospace; font-weight: bold; white-space: nowrap; font-size: 26px;">
+          <div class="linea-sler-wrapper" style="text-align: ${esPar ? 'right' : 'left'}; width: 100%; margin-bottom: 12px; overflow: hidden;">
+            <span class="linea-texto-dinamico" style="display: inline-block; color: ${esPar ? '#1e40af' : '#0f172a'}; font-family: monospace; font-weight: bold; white-space: nowrap; font-size: 24px;">
               ${l.texto}
             </span>
           </div>
         `;
       }).join("");
 
-      // Forzamos el cálculo inmediato midiendo el contenedor real
-      const contenedorAncho = render.clientWidth - 30;
-      const wrappers = render.querySelectorAll('.linea-sler-wrapper');
-      
-      wrappers.forEach(wrapper => {
-        const span = wrapper.querySelector('.linea-texto-dinamico');
-        if (!span) return;
+      // Damos un pequeño respiro de 50ms para que el DOM de Tailwind y el Flexbox dibujen el ancho real
+      setTimeout(() => {
+        // Obtenemos el ancho real del contenedor padre (la caja blanca)
+        const contenedorAncho = render.parentElement.clientWidth > 50 ? render.parentElement.clientWidth - 60 : 600;
+        const wrappers = render.querySelectorAll('.linea-sler-wrapper');
+        
+        wrappers.forEach(wrapper => {
+          const span = wrapper.querySelector('.linea-texto-dinamico');
+          if (!span) return;
 
-        let fontSize = 28; // Tamaño inicial seguro para textos largos
-        span.style.fontSize = `${fontSize}px`;
-
-        // Reducimos dinámicamente hasta que encaje perfecto dentro del ancho disponible
-        while (span.scrollWidth > contenedorAncho && fontSize > 12) {
-          fontSize -= 1;
+          let fontSize = 28; // Tamaño inicial controlado
           span.style.fontSize = `${fontSize}px`;
-        }
-      });
+
+          // Bucle estricto de reducción hasta que el ancho del texto sea menor o igual al contenedor
+          while (span.scrollWidth > contenedorAncho && fontSize > 12) {
+            fontSize -= 1;
+            span.style.fontSize = `${fontSize}px`;
+          }
+        });
+      }, 50);
     }
   }
 }
-
 function iniciarCronometro() {
   tiempoInicioMs = Date.now();
   const reloj = document.getElementById("reloj");

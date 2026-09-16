@@ -8,27 +8,12 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
     (function() {
-      emailjs.init("TU_PUBLIC_KEY");
+      emailjs.init("TU_PUBLIC_KEY"); // Reemplaza con tu Public Key de EmailJS cuando lo conectes
     })();
   </script>
   <style>
     body { background: #cbd5e1; margin: 0; font-family: sans-serif; }
     .hidden-screen { display: none !important; }
-    
-    #render {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 0 10px;
-    }
-    
-    /* Ajuste exacto de tamaño para que el taquistoscopio quepa en un solo renglón */
-    #display-sler {
-      font-size: clamp(1.5rem, 3.5vw, 3rem);
-      word-break: break-all;
-      text-align: center;
-      padding: 0 10px;
-      white-space: nowrap;
-    }
   </style>
 </head>
 <body class="h-screen flex flex-col justify-between p-4 overflow-hidden">
@@ -62,6 +47,7 @@
         Has completado los niveles gratuitos. Completa tus datos para registrar el pago por Mercado Pago ($1 USD) y recibir tu PIN de acceso automático.
       </p>
 
+      <!-- Formulario de datos para el pago y aviso -->
       <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 text-left space-y-3">
         <label class="block text-xs font-bold text-slate-300 uppercase">Tus Datos para la Licencia:</label>
         <input type="text" id="pago-nombre" placeholder="Nombre y Apellido" class="w-full px-3 py-2 rounded bg-slate-700 text-white border border-slate-600 text-xs" />
@@ -77,6 +63,7 @@
       </div>
 
       <div class="flex flex-col gap-2 pt-2">
+        <!-- Enlace a Mercado Pago integrado con tu link de cobro real -->
         <a href="https://mpago.li/1uHvu2d" target="_blank" onclick="registrarSolicitudPago()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition shadow flex items-center justify-center gap-2">
           💳 PAGAR CON MERCADO PAGO ($1 USD)
         </a>
@@ -87,21 +74,42 @@
     </div>
   </div>
 
-  <!-- 0. PANTALLA INICIAL AUSPICIOSA -->
+  <!-- 0. PANTALLA INICIAL AUSPICIOSA (VERSIÓN FREE / FREEMIUM) -->
   <div id="pantalla-presentacion" class="flex flex-col items-center justify-center flex-1 bg-slate-900 text-white rounded-lg shadow-2xl p-8 m-4 overflow-y-auto">
     <div class="max-w-3xl w-full flex flex-col items-center text-center space-y-6">
+      
       <div class="inline-block bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold px-4 py-1 rounded-full text-xs uppercase tracking-widest shadow">
         ✨ Edición Abierta — Niveles 1 y 2 Libres (Versión Free)
       </div>
+
       <h1 class="text-4xl font-black text-white tracking-tight">
         DOMINA LA TÉCNICA DE LECTURA RECÍPROCA SLER
       </h1>
+      
       <p class="text-slate-300 text-base leading-relaxed max-w-2xl">
-        Entrena tu agilidad visual, optimiza tu velocidad y reduce los movimientos sacádicos innecesarios mediante el sistema interactivo patentado.
+        Entrena tu agilidad visual, optimiza tu velocidad y reduce los movimientos sacádicos innecesarios mediante el sistema interactivo patentado. Disfruta de los primeros dos niveles de formación completa sin costo inicial.
       </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-left my-2">
+        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700">
+          <h3 class="font-bold text-emerald-400 text-sm uppercase mb-2">🚀 Acceso Libre Garantizado</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Comienza de inmediato los bloques Inicial y Elemental (hasta el ejercicio 51) con total libertad.
+          </p>
+        </div>
+
+        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700">
+          <h3 class="font-bold text-yellow-400 text-sm uppercase mb-2">💡 Asesoría & Soporte Pedagógico</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Canales directos de consulta con el equipo de desarrollo y soporte técnico especializado para optimizar tu experiencia.
+          </p>
+        </div>
+      </div>
+
       <button onclick="irABienvenida()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-10 rounded-lg shadow-lg text-lg transition transform active:scale-95">
         INGRESAR AL PROGRAMA
       </button>
+
     </div>
   </div>
 
@@ -134,12 +142,14 @@
       <p id="portada-desc" class="text-slate-300 text-sm leading-relaxed">
         Descripción del objetivo del nivel.
       </p>
+
       <div class="bg-slate-900 p-4 rounded-lg border border-slate-700 text-left text-xs text-slate-300 space-y-2">
         <div class="font-bold text-emerald-400 uppercase">Especificaciones del Nivel:</div>
         <ul class="list-disc list-inside space-y-1 text-slate-400" id="portada-opciones">
           <li>Secuencia optimizada de lectura recíproca.</li>
         </ul>
       </div>
+
       <button id="btn-comenzar-nivel" onclick="comenzarEjerciciosNivel()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 px-12 rounded-lg text-lg transition shadow-lg">
         COMENZAR NIVEL
       </button>
@@ -174,8 +184,8 @@
       <div class="flex-1 bg-slate-400 rounded-md border-2 border-slate-500 flex items-center justify-center p-6 overflow-hidden">
         <div class="w-full h-full bg-white rounded flex items-center justify-center p-8 shadow-inner overflow-auto">
           <h2 id="placeholder" class="text-5xl font-extrabold text-blue-700">SELECCIONE UN EJERCICIO</h2>
-          <div id="display-sler" class="font-extrabold text-slate-900 tracking-wider"></div>
-          <div id="render" class="hidden text-slate-900 leading-tight"></div>
+          <div id="display-sler" class="text-7xl font-extrabold text-slate-900 tracking-widest"></div>
+          <div id="render" class="hidden text-3xl font-mono text-slate-900 leading-relaxed whitespace-pre-wrap"></div>
         </div>
       </div>
 
@@ -200,10 +210,13 @@
   <!-- 3. PANTALLA DE FINALIZACIÓN Y LOGROS -->
   <div id="pantalla-final" class="hidden-screen flex-1 flex flex-col items-center justify-center bg-slate-900 text-white rounded-lg shadow-2xl p-8 m-4 overflow-y-auto">
     <div class="max-w-3xl w-full flex flex-col items-center text-center space-y-6">
+      
       <div class="inline-block bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold px-4 py-1 rounded-full text-sm uppercase tracking-widest">
         ¡Entrenamiento Completado!
       </div>
+
       <h1 class="text-4xl font-black text-yellow-400 tracking-tight">RESUMEN DE LOGROS ALCANZADOS</h1>
+      
       <div class="grid grid-cols-2 gap-4 w-full max-w-lg bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-inner">
         <div class="flex flex-col items-center border-r border-slate-700 pr-4">
           <span class="text-slate-400 text-xs font-semibold uppercase">Ejercicios Completados</span>
@@ -214,6 +227,7 @@
           <span id="stat-tiempo" class="text-3xl font-mono font-bold text-emerald-400 mt-1">00:00:00</span>
         </div>
       </div>
+
       <button onclick="irABienvenida()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-8 rounded-lg text-sm transition mt-2">
         REINICIAR ENTRENAMIENTO
       </button>
@@ -223,20 +237,19 @@
   <!-- LÓGICA DE NAVEGACIÓN Y CORREOS -->
   <script type="module">
     import { cargarEjercicio, manejarDisparo as disparoFirestore } from "./main.js";
-    import { PacingControl } from "./pacing.js";
 
     const infoNiveles = {
-      1: { titulo: "NIVEL 1: INICIAL", desc: "Adaptación del foco visual mediante revelado taquistoscópico.", opciones: ["Patrón de estímulo silábico directo", "Tandas 1 y 2", "Versión Free"], esGratis: true },
-      2: { titulo: "NIVEL 2: ELEMENTAL", desc: "Estructuras de oraciones con alternancia de dirección.", opciones: ["Incorporación del motor de ritmo dinámico", "Tandas 3 a 5", "Versión Free"], esGratis: true },
-      3: { titulo: "NIVEL 3: INTERMEDIO", desc: "Procesamiento de párrafos continuos (Requiere Licencia Pro).", opciones: ["Textos de mayor densidad semántica", "Tandas 6 y 7", "Acreditación Pro"], esGratis: false },
-      4: { titulo: "NIVEL 4: AVANZADO", desc: "Máximo rendimiento de lectura continua (Requiere Licencia Pro).", opciones: ["Formato completo de competencia", "Tandas 8 y 9"], esGratis: false },
-      5: { titulo: "NIVEL 5 (TOP): TEXTO COMPLETO", desc: "Evaluación superior sobre lecturas de alta longitud (Requiere Licencia Pro).", opciones: ["Texto de alta densidad", "Ejercicio 88"], esGratis: false }
+      1: { titulo: "NIVEL 1: INICIAL", desc: "Adaptación del foco visual mediante revelado taquistoscópico.", opciones: ["Patrón de estímulo silábico directo", "Tandas 1 y 2 (Ejercicios 1 al 21)", "Versión Free"], esGratis: true },
+      2: { titulo: "NIVEL 2: ELEMENTAL", desc: "Estructuras de oraciones con alternancia de dirección.", opciones: ["Incorporación del motor de ritmo dinámico", "Tandas 3 a 5 (Ejercicios 22 al 51)", "Versión Free"], esGratis: true },
+      3: { titulo: "NIVEL 3: INTERMEDIO", desc: "Procesamiento de párrafos continuos (Requiere Licencia Pro).", opciones: ["Textos de mayor densidad semántica", "Tandas 6 y 7 (Ejercicios 52 al 71)", "Acreditación Pro"], esGratis: false },
+      4: { titulo: "NIVEL 4: AVANZADO", desc: "Máximo rendimiento de lectura continua (Requiere Licencia Pro).", opciones: ["Formato completo de competencia", "Tandas 8 y 9 (Ejercicios 72 al 87)", "Evaluación de Horas de Vuelo"], esGratis: false },
+      5: { titulo: "NIVEL 5 (TOP): TEXTO COMPLETO", desc: "Evaluación superior sobre lecturas de alta longitud (Requiere Licencia Pro).", opciones: ["Texto de alta densidad", "Ejercicio 88", "Acreditación superior"], esGratis: false }
     };
 
     let ejAct = 1;
     let nivelSeleccionado = 1;
     let ejerciciosContabilizados = 0;
-    let usuarioPremium = localStorage.getItem('sler_modo_admin') === 'true';
+    let usuarioPremium = false;
 
     window.validarAccesoUsuario = function() {
       const nombreInput = document.getElementById('login-nombre').value.trim().toLowerCase().replace(/\s+/g, ' ');
@@ -248,38 +261,77 @@
         return;
       }
 
-      if ((nombreInput === "jonatan ribot" && emailInput === "proferibotmusic@hotmail.com") || pin === "SLER-PRO-2026" || pin === "ADMIN-SLER") {
+      if (nombreInput === "jonatan ribot" && emailInput === "proferibotmusic@hotmail.com") {
         usuarioPremium = true;
-        localStorage.setItem('sler_modo_admin', 'true');
-        alert("Acceso reconocido.");
+        alert("Acceso de desarrollador reconocido. Bienvenido, Jonatan.");
+        document.getElementById('pantalla-login').classList.add('hidden-screen');
+        document.getElementById('modal-pago').classList.add('hidden-screen');
+        return;
+      } else if (pin === "SLER-PRO-2026" || pin === "ADMIN-SLER") {
+        usuarioPremium = true;
+        alert("¡PIN válido! Acceso completo desbloqueado.");
+        document.getElementById('pantalla-login').classList.add('hidden-screen');
+        document.getElementById('modal-pago').classList.add('hidden-screen');
+        return;
       }
+
       document.getElementById('pantalla-login').classList.add('hidden-screen');
     };
 
     window.entrarModoFreemium = function() {
       const email = document.getElementById('login-email').value.trim();
-      if(!email) document.getElementById('login-email').value = "invitado@sler.app";
+      if(!email) {
+        document.getElementById('login-email').value = "invitado@sler.app";
+      }
       document.getElementById('pantalla-login').classList.add('hidden-screen');
     };
 
     window.registrarSolicitudPago = function() {
       const nombre = document.getElementById('pago-nombre').value.trim();
       const email = document.getElementById('pago-email').value.trim();
-      if(!nombre || !email) return;
-      const templateParams = { to_name: "Jonatan", user_name: nombre, user_email: email, mensaje: `Pago iniciado por ${nombre} (${email}).` };
-      emailjs.send('default_service', 'template_9gypr28', templateParams).catch(() => {});
+
+      if(!nombre || !email) {
+        alert("Por favor completa tu nombre y email antes de proceder al pago.");
+        return;
+      }
+
+      const templateParams = {
+        to_name: "Jonatan",
+        user_name: nombre,
+        user_email: email,
+        mensaje: `El usuario ${nombre} (${email}) ha iniciado el proceso de compra por Mercado Pago ($1 USD).`
+      };
+
+      emailjs.send('default_service', 'template_9gypr28', templateParams)
+        .then(() => {
+          console.log("Aviso enviado al maestro con éxito.");
+        }, (err) => {
+          console.error("Error al enviar el aviso:", err);
+        });
     };
 
     window.canjearPinPago = function() {
       const inputTexto = document.getElementById('input-pin-pago').value.trim().toLowerCase();
-      if(inputTexto === "sler-pro-2026" || inputTexto === "sler-pass" || inputTexto === "slermaster" || inputTexto === "admin-sler") {
+      const nombrePago = document.getElementById('pago-nombre').value.trim().toLowerCase().replace(/\s+/g, ' ');
+      const emailPago = document.getElementById('pago-email').value.trim().toLowerCase();
+
+      // Validación como desarrollador directo desde el modal de pago
+      if ((nombrePago === "jonatan ribot" && emailPago === "proferibotmusic@hotmail.com") || inputTexto === "slermaster" || inputTexto === "admin-sler") {
         usuarioPremium = true;
-        localStorage.setItem('sler_modo_admin', 'true');
-        alert("¡Licencia activada!");
+        alert("¡Acceso de desarrollador acreditado desde el módulo de pago!");
+        document.getElementById('modal-pago').classList.add('hidden-screen');
+        window.iniciarNivel(nivelSeleccionado);
+        return;
+      }
+
+      // Validación por PIN de Mercado Pago tradicional
+      if(inputTexto === "sler-pro-2026" || inputTexto === "sler-pass") {
+        usuarioPremium = true;
+        alert("¡Licencia activada con éxito!");
         document.getElementById('modal-pago').classList.add('hidden-screen');
         window.iniciarNivel(nivelSeleccionado);
       } else {
-        alert("PIN incorrecto.");
+        alert("PIN incorrecto. Verifica el código enviado y reintenta.");
       }
     };
 
@@ -297,15 +349,27 @@
       document.getElementById(idMostrar).classList.remove('hidden-screen');
     };
 
-    window.irABienvenida = function() { window.cambiarPantalla('pantalla-bienvenida'); };
+    window.irABienvenida = function() {
+      window.cambiarPantalla('pantalla-bienvenida');
+    };
 
     const inicioPorTanda = { 1: 1, 2: 12, 3: 22, 4: 32, 5: 42, 6: 52, 7: 62, 8: 72, 9: 82, 10: 88 };
 
     window.saltarATanda = function(tanda) {
-      window.seleccionarEjercicioGlobal(inicioPorTanda[parseInt(tanda)] || 1);
+      const ejInicio = inicioPorTanda[tanda] || 1;
+      if (ejInicio >= 52 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+      window.seleccionarEjercicioGlobal(ejInicio);
     };
 
     window.iniciarNivel = function(numNivel) {
+      if (numNivel >= 3 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+
       nivelSeleccionado = numNivel;
       const data = infoNiveles[numNivel];
       document.getElementById('portada-titulo').innerText = data.titulo;
@@ -321,6 +385,11 @@
     };
 
     window.comenzarEjerciciosNivel = function() {
+      if (nivelSeleccionado >= 3 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+
       let ejInicio = 1;
       if (nivelSeleccionado === 2) ejInicio = 22;
       else if (nivelSeleccionado === 3) ejInicio = 52;
@@ -338,7 +407,7 @@
       for (let i = 1; i <= 88; i++) {
         const optEj = document.createElement('option');
         optEj.value = i;
-        optEj.innerText = `Ej. ${i}`;
+        optEj.innerText = `Ej. ${i} ${i >= 52 && !usuarioPremium ? '🔒 (Pago)' : ''}`;
         selectEj.appendChild(optEj);
       }
       actualizarMapaGeneral();
@@ -347,6 +416,7 @@
     function actualizarMapaGeneral() {
       const selectTotal = document.getElementById('select-total-tandas');
       selectTotal.innerHTML = '';
+      
       const tandasInfo = [
         { t: 1, niv: 1, rango: "1-11" }, { t: 2, niv: 1, rango: "12-21" },
         { t: 3, niv: 2, rango: "22-31" }, { t: 4, niv: 2, rango: "32-41" }, { t: 5, niv: 2, rango: "42-51" },
@@ -354,44 +424,80 @@
         { t: 8, niv: 4, rango: "72-81" }, { t: 9, niv: 4, rango: "82-87" },
         { t: 10, niv: "5 (TOP)", rango: "88" }
       ];
+
       tandasInfo.forEach(info => {
         const optTanda = document.createElement('option');
         optTanda.value = info.t;
-        optTanda.innerText = `Nivel ${info.niv} — Ej. ${info.rango}`;
+        let tandaActual = 1;
+        if (ejAct >= 12 && ejAct <= 21) tandaActual = 2;
+        else if (ejAct >= 22 && ejAct <= 31) tandaActual = 3;
+        else if (ejAct >= 32 && ejAct <= 41) tandaActual = 4;
+        else if (ejAct >= 42 && ejAct <= 51) tandaActual = 5;
+        else if (ejAct >= 52 && ejAct <= 61) tandaActual = 6;
+        else if (ejAct >= 62 && ejAct <= 71) tandaActual = 7;
+        else if (ejAct >= 72 && ejAct <= 81) tandaActual = 8;
+        else if (ejAct >= 82 && ejAct <= 87) tandaActual = 9;
+        else if (ejAct >= 88) tandaActual = 10;
+
+        let bloqueado = (info.t >= 6 && !usuarioPremium);
+        let estadoTexto = info.t === tandaActual ? "◄ [EN CURSO]" : (info.t < tandaActual ? "✓" : "");
+        if (bloqueado) estadoTexto = "🔒 [PRO]";
+
+        optTanda.innerText = `Nivel ${info.niv} — Ej. ${info.rango} ${estadoTexto}`;
+        if (info.t === tandaActual) optTanda.selected = true;
         selectTotal.appendChild(optTanda);
       });
     }
 
     window.seleccionarEjercicioGlobal = function(val) {
-      ejAct = parseInt(val);
+      const numEj = parseInt(val);
+      if (numEj >= 52 && !usuarioPremium) {
+        document.getElementById('modal-pago').classList.add('hidden-screen');
+        document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+
+      ejAct = numEj;
       const selectEj = document.getElementById('select-ejercicio-global');
       if (selectEj) selectEj.value = ejAct;
+      actualizarMapaGeneral();
       cargarEjercicio(ejAct);
     };
 
-    window.manejarDisparo = function() { disparoFirestore(); };
+    window.manejarDisparo = function() {
+      disparoFirestore();
+    };
 
     window.mostrarPantallaFinal = function() {
-      document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : ejAct} / 88`;
-      if (typeof window.obtenerTiempoTotalFormateado === "function") {
-        document.getElementById('stat-tiempo').innerText = window.obtenerTiempoTotalFormateado();
-      }
+      document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : (usuarioPremium ? '88' : '51')} / 88`;
+      const relojPrincipal = document.getElementById('reloj');
+      document.getElementById('stat-tiempo').innerText = relojPrincipal ? relojPrincipal.innerText : "00:00:00";
       window.cambiarPantalla('pantalla-final');
     };
 
     let marcasHistorial = [];
+
     window.registrarMarcaEnTabla = function() {
       const reloj = document.getElementById('reloj');
-      marcasHistorial.push({ ejercicio: ejAct, tiempo: reloj ? reloj.innerText : "00:00:00" });
+      const tiempoActual = reloj ? reloj.innerText : "00:00:00";
+      
+      marcasHistorial.push({
+        ejercicio: ejAct,
+        tiempo: tiempoActual
+      });
+
       ejerciciosContabilizados = Math.max(ejerciciosContabilizados, ejAct);
+
       const contenedorLista = document.getElementById('lista-marcas');
       if (contenedorLista) {
-        contenedorLista.innerHTML = marcasHistorial.map(m => `
+        contenedorLista.innerHTML = marcasHistorial.map((m, index) => `
           <div class="flex justify-between items-center bg-white p-2 rounded border border-slate-200 shadow-sm text-xs">
             <span class="font-bold text-slate-700">Ej. ${m.ejercicio}</span>
             <span class="text-emerald-600 font-mono">${m.tiempo}</span>
           </div>
         `).join("");
+        
+        contenedorLista.scrollTop = contenedorLista.scrollHeight;
       }
     };
   </script>

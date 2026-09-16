@@ -450,15 +450,20 @@ window.validarAccesoPin = function() {
 };
 
 function verificarSesionPrevia() {
+  console.log("--- VERIFICANDO SESIÓN ---");
   const accesoConcedido = localStorage.getItem("sler_acceso_concedido");
   const estaValidado = localStorage.getItem("sler_usuario_validado");
+  console.log("Valores en localStorage:", { accesoConcedido, estaValidado });
 
   if (accesoConcedido === "true" || estaValidado === "true") {
+    console.log("Sesión previa detectada. Ocultando login y cargando ej. 1...");
     ocultarPantallaLogin();
     if (!localStorage.getItem("sler_fecha_inicio")) {
       localStorage.setItem("sler_fecha_inicio", new Date().getTime());
     }
     cargarEjercicio(1);
+  } else {
+    console.log("No hay sesión previa. Mostrando pantalla de login.");
   }
 }
 

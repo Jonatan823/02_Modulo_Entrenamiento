@@ -24,10 +24,8 @@ let tiempoInicioMs = 0;
 let cronometro = null;
 let globalPID = 0;
 
-// Variables globales para el control de "Tiempo Congelado" y "Horas de Vuelo"
 let tiempoTotalAcumuladoSegundos = parseInt(localStorage.getItem("sler_tiempo_total") || "0");
 
-// --- MAPPING DE TANDAS PARA EL PACING ---
 function obtenerTandaPorEjercicio(numEj) {
     if (numEj <= 11) return 1;
     if (numEj <= 21) return 2;
@@ -44,18 +42,15 @@ function obtenerTandaPorEjercicio(numEj) {
 function verificarAccesoPacing(numEj) {
     const tanda = obtenerTandaPorEjercicio(numEj);
     
-    // Verificación robusta de administrador / usuario premium (Bypass total)
     const esAdmin = localStorage.getItem('sler_modo_admin') === 'true' || 
                     localStorage.getItem('sler_usuario_premium') === 'true' ||
                     (typeof window !== 'undefined' && window.usuarioEsAdmin === true) ||
                     (typeof window !== 'undefined' && window.usuarioPremium === true);
 
-    // Si es administrador, se omiten todas las restricciones de la escalera
     if (esAdmin) {
         return true;
     }
 
-    // Si intenta saltar a niveles avanzados sin ser admin
     if (numEj > 21) {
         const progreso = PacingControl.obtenerProgresoSesion();
         if (progreso.ejercicioMaximo < 21) {
@@ -154,7 +149,6 @@ export async function manejarDisparo() {
   } else {
     const segundosTranscurridosActual = Math.floor((Date.now() - tiempoInicioMs) / 1000);
     
-    // REGLA DE SEGURIDAD: Eximir al admin de la espera de 3 segundos si está testeando rápido
     if (segundosTranscurridosActual < 3 && !esAdmin) {
       alert("Demasiado rápido. Debes permanecer al menos 3 segundos procesando el estímulo visual antes de finalizar el ejercicio.");
       return;
@@ -282,7 +276,7 @@ function ejecutarSlerLayout() {
       render.innerHTML = datosEjercicioActual.lineas.map((l) => {
         const esPar = l.tipo === "C";
         return `
-          <div class="linea-sler-wrapper" style="text-align: ${esPar ? 'right' : 'left'}; width: 100%; margin-bottom: 8px; overflow: hidden;">
+          <div class="linea-sler-wrapper" style="text-align: ${esPar ? 'right' : 'left'}; width: 100%; margin-bottom: 6px; overflow: hidden;">
             <span class="linea-texto-dinamico" style="display: inline-block; color: ${esPar ? '#1e40af' : '#0f172a'}; font-family: monospace; font-weight: bold; white-space: nowrap; font-size: 3rem;">
               ${l.texto}
             </span>
@@ -291,16 +285,17 @@ function ejecutarSlerLayout() {
       }).join("");
 
       setTimeout(() => {
-        const contenedorAncho = render.clientWidth - 40;
+        const contenedorAncho = render.clientWidth - 20;
         const wrappers = render.querySelectorAll('.linea-sler-wrapper');
         
         wrappers.forEach(wrapper => {
           const span = wrapper.querySelector('.linea-texto-dinamico');
           if (!span) return;
 
-          let fontSize = 48;
+          let fontSize = 44; // Tamaño inicial óptimo
           span.style.fontSize = `${fontSize}px`;
 
+          // Reduce la letra línea por línea hasta que encaje exacto en su dirección (izq/der)
           while (span.scrollWidth > contenedorAncho && fontSize > 16) {
             fontSize -= 2;
             span.style.fontSize = `${fontSize}px`;

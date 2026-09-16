@@ -273,14 +273,40 @@ function ejecutarSlerLayout() {
   const render = document.getElementById("render");
   const placeholder = document.getElementById("placeholder");
   if (placeholder) placeholder.classList.add("hidden");
+  
   if (render) {
     render.scrollTop = 0;
     render.classList.remove("hidden");
+    
     if (datosEjercicioActual && datosEjercicioActual.lineas && Array.isArray(datosEjercicioActual.lineas)) {
-      render.innerHTML = datosEjercicioActual.lineas.map(l => {
+      render.innerHTML = datosEjercicioActual.lineas.map((l) => {
         const esPar = l.tipo === "C";
-        return `<div class="linea" style="text-align:${esPar ? 'right' : 'left'}; color:${esPar ? '#1e40af' : '#0f172a'}; font-family: monospace; font-weight: bold;">${l.texto}</div>`;
+        return `
+          <div class="linea-sler-wrapper" style="text-align: ${esPar ? 'right' : 'left'}; width: 100%; margin-bottom: 8px; overflow: hidden;">
+            <span class="linea-texto-dinamico" style="display: inline-block; color: ${esPar ? '#1e40af' : '#0f172a'}; font-family: monospace; font-weight: bold; white-space: nowrap; font-size: 3rem;">
+              ${l.texto}
+            </span>
+          </div>
+        `;
       }).join("");
+
+      setTimeout(() => {
+        const contenedorAncho = render.clientWidth - 40;
+        const wrappers = render.querySelectorAll('.linea-sler-wrapper');
+        
+        wrappers.forEach(wrapper => {
+          const span = wrapper.querySelector('.linea-texto-dinamico');
+          if (!span) return;
+
+          let fontSize = 48;
+          span.style.fontSize = `${fontSize}px`;
+
+          while (span.scrollWidth > contenedorAncho && fontSize > 16) {
+            fontSize -= 2;
+            span.style.fontSize = `${fontSize}px`;
+          }
+        });
+      }, 10);
     }
   }
 }

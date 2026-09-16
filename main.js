@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1VUXm-OtZE30X4Ugv06VYUKY7RcneKDg",
@@ -14,6 +14,19 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+// Habilitar persistencia offline para evitar bloqueos por microcortes de red o protocolo QUIC
+try {
+  enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code == 'failed-precondition') {
+      console.warn("Persistencia fallida: múltiples pestañas abiertas.");
+    } else if (err.code == 'unimplemented') {
+      console.warn("El navegador no soporta persistencia.");
+    }
+  });
+} catch (e) {
+  console.error("Error al activar persistencia offline:", e);
+}
 
 let ejercicioActivoNum = 1;
 let datosEjercicioActual = null;
@@ -82,7 +95,11 @@ export async function cargarEjercicio(numEj) {
 
   try {
     const docRef = doc(db, "ejercicios", `ej_${ejercicioActivoNum}`);
-    const docSnap = await getDoc(docRef);
+    // Añadimos control de tiempo de espera (timeout) para que no quede congelado si la red falla
+    const docSnap = await Promise.race([
+      getDoc(docRef),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout de red")), 6000))
+    ]);
 
     if (docSnap.exists()) {
       datosEjercicioActual = docSnap.data();
@@ -92,7 +109,7 @@ export async function cargarEjercicio(numEj) {
     }
   } catch (error) {
     console.error("Error al obtener ejercicio:", error);
-    actualizarEncabezadoUI("Error de conexión");
+    actualizarEncabezadoUI("Error de conexión (Modo Offline)");
   }
 }
 
@@ -134,7 +151,6 @@ export async function manejarDisparo() {
     }
     iniciarCronometro();
 
-    // Si los datos llegaron, ejecutamos el flujo correspondiente sin bloquear el inicio visual
     if (datosEjercicioActual) {
       if (datosEjercicioActual.tipo_flujo === "taquistoscopio") {
         await ejecutarTaquistoscopio();
@@ -229,7 +245,7 @@ function tocarFanfarriaFestejo() {
     { freq: 523.25, dur: 0.15 }, // Do
     { freq: 523.25, dur: 0.10 }, // Do
     { freq: 659.25, dur: 0.10 }, // Mi
-    { freq: 783.99, dur: 0.40 }  // Sol (Chan-chara-raaan!)
+    { freq: 783.99, dur: 0.40 }  // Sol
   ];
 
   let tiempoInicio = ctx.currentTime;

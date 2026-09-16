@@ -276,32 +276,31 @@ function ejecutarSlerLayout() {
       render.innerHTML = datosEjercicioActual.lineas.map((l) => {
         const esPar = l.tipo === "C";
         return `
-          <div class="linea-sler-wrapper" style="text-align: ${esPar ? 'right' : 'left'}; width: 100%; margin-bottom: 6px; overflow: hidden;">
-            <span class="linea-texto-dinamico" style="display: inline-block; color: ${esPar ? '#1e40af' : '#0f172a'}; font-family: monospace; font-weight: bold; white-space: nowrap; font-size: 3rem;">
+          <div class="linea-sler-wrapper" style="text-align: ${esPar ? 'right' : 'left'}; width: 100%; margin-bottom: 10px; overflow: hidden;">
+            <span class="linea-texto-dinamico" style="display: inline-block; color: ${esPar ? '#1e40af' : '#0f172a'}; font-family: monospace; font-weight: bold; white-space: nowrap; font-size: 26px;">
               ${l.texto}
             </span>
           </div>
         `;
       }).join("");
 
-      setTimeout(() => {
-        const contenedorAncho = render.clientWidth - 20;
-        const wrappers = render.querySelectorAll('.linea-sler-wrapper');
-        
-        wrappers.forEach(wrapper => {
-          const span = wrapper.querySelector('.linea-texto-dinamico');
-          if (!span) return;
+      // Forzamos el cálculo inmediato midiendo el contenedor real
+      const contenedorAncho = render.clientWidth - 30;
+      const wrappers = render.querySelectorAll('.linea-sler-wrapper');
+      
+      wrappers.forEach(wrapper => {
+        const span = wrapper.querySelector('.linea-texto-dinamico');
+        if (!span) return;
 
-          let fontSize = 44; // Tamaño inicial óptimo
+        let fontSize = 28; // Tamaño inicial seguro para textos largos
+        span.style.fontSize = `${fontSize}px`;
+
+        // Reducimos dinámicamente hasta que encaje perfecto dentro del ancho disponible
+        while (span.scrollWidth > contenedorAncho && fontSize > 12) {
+          fontSize -= 1;
           span.style.fontSize = `${fontSize}px`;
-
-          // Reduce la letra línea por línea hasta que encaje exacto en su dirección (izq/der)
-          while (span.scrollWidth > contenedorAncho && fontSize > 16) {
-            fontSize -= 2;
-            span.style.fontSize = `${fontSize}px`;
-          }
-        });
-      }, 10);
+        }
+      });
     }
   }
 }

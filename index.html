@@ -20,6 +20,15 @@
       box-sizing: border-box;
       padding: 0 10px;
     }
+    
+    /* Ajuste exacto de tamaño para que el taquistoscopio quepa en un solo renglón */
+    #display-sler {
+      font-size: clamp(1.5rem, 3.5vw, 3rem);
+      word-break: break-all;
+      text-align: center;
+      padding: 0 10px;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body class="h-screen flex flex-col justify-between p-4 overflow-hidden">
@@ -165,7 +174,7 @@
       <div class="flex-1 bg-slate-400 rounded-md border-2 border-slate-500 flex items-center justify-center p-6 overflow-hidden">
         <div class="w-full h-full bg-white rounded flex items-center justify-center p-8 shadow-inner overflow-auto">
           <h2 id="placeholder" class="text-5xl font-extrabold text-blue-700">SELECCIONE UN EJERCICIO</h2>
-          <div id="display-sler" class="text-7xl font-extrabold text-slate-900 tracking-widest"></div>
+          <div id="display-sler" class="font-extrabold text-slate-900 tracking-wider"></div>
           <div id="render" class="hidden text-slate-900 leading-tight"></div>
         </div>
       </div>

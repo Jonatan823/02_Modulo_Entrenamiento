@@ -149,6 +149,13 @@ async function ejecutarTaquistoscopio() {
       await new Promise((r) => setTimeout(r, vel));
     }
   }
+
+  // Al finalizar los disparos secuenciales, se muestra la frase o línea completa (f)
+  if (currentPID === globalPID && estado !== "start" && display) {
+    if (datosEjercicioActual.f) {
+      display.innerText = datosEjercicioActual.f.toUpperCase();
+    }
+  }
 }
 
 // Aplicación de la regla de caracteres (umbral estricto para evitar desbordamiento)

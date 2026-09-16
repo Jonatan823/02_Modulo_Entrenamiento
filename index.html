@@ -44,7 +44,7 @@
       </div>
       <h3 class="text-2xl font-black text-white">Desbloquea el Nivel 3 y Avanzados</h3>
       <p class="text-slate-300 text-xs leading-relaxed">
-        Has completado los niveles gratuitos. Completa tus datos para registrar el pago por Mercado Pago ($1 USD) y recibir tu PIN de acceso automático.
+        Has alcanzado el límite de los niveles gratuitos. Completa tus datos para registrar el pago por Mercado Pago ($1 USD) y recibir tu PIN de acceso automático.
       </p>
 
       <!-- Formulario de datos para el pago y aviso -->
@@ -68,7 +68,7 @@
           💳 PAGAR CON MERCADO PAGO ($1 USD)
         </a>
         <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-white text-xs underline py-1">
-          Volver a los niveles gratuitos (1 y 2)
+          Volver al inicio / niveles gratuitos
         </button>
       </div>
     </div>
@@ -94,7 +94,7 @@
         <div class="bg-slate-800 p-5 rounded-lg border border-slate-700">
           <h3 class="font-bold text-emerald-400 text-sm uppercase mb-2">🚀 Acceso Libre Garantizado</h3>
           <p class="text-xs text-slate-300 leading-relaxed">
-            Comienza de inmediato los bloques Inicial y Elemental (hasta el ejercicio 51) con total libertad.
+            Comienza de inmediato los bloques Inicial y Elemental (hasta el ejercicio 51) de forma secuencial.
           </p>
         </div>
 
@@ -117,7 +117,7 @@
   <div id="pantalla-bienvenida" class="hidden-screen flex flex-col items-center justify-center flex-1 text-center bg-white rounded-lg shadow-lg p-8 m-4">
     <h1 class="text-4xl font-extrabold text-slate-800 mb-4">ENTRENAMIENTO LECTURA SLER</h1>
     <p class="text-slate-600 max-w-lg mb-8 text-lg">
-      Selecciona tu punto de partida. Los niveles 1 y 2 se encuentran completamente habilitados en versión libre.
+      Selecciona tu punto de partida. Los niveles 1 y 2 se encuentran habilitados para el avance secuencial.
     </p>
     <div class="flex gap-4">
       <button onclick="iniciarNivel(1)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow-md text-base transition">
@@ -220,7 +220,7 @@
       <div class="grid grid-cols-2 gap-4 w-full max-w-lg bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-inner">
         <div class="flex flex-col items-center border-r border-slate-700 pr-4">
           <span class="text-slate-400 text-xs font-semibold uppercase">Ejercicios Completados</span>
-          <span id="stat-ejercicios" class="text-4xl font-black text-white mt-1">88 / 88</span>
+          <span id="stat-ejercicios" class="text-4xl font-black text-white mt-1">0 / 88</span>
         </div>
         <div class="flex flex-col items-center pl-4">
           <span class="text-slate-400 text-xs font-semibold uppercase">Tiempo Total ("Horas de Vuelo")</span>
@@ -248,33 +248,31 @@
 
     let ejAct = 1;
     let nivelSeleccionado = 1;
-    let ejerciciosContabilizados = 0;
+    let maxEjercicioAlcanzado = 1; // Control estricto de avance secuencial para usuario Free
     let usuarioPremium = false;
 
     window.validarAccesoUsuario = function() {
       const nombreInput = document.getElementById('login-nombre').value.trim().toLowerCase().replace(/\s+/g, ' ');
       const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
-      const pin = document.getElementById('login-pin').value.trim();
+      const pin = document.getElementById('login-pin').value.trim().toLowerCase();
 
       if(!nombreInput || !emailInput) {
         alert("Por favor completa tu nombre y correo electrónico.");
         return;
       }
 
-      if (nombreInput === "jonatan ribot" && emailInput === "proferibotmusic@hotmail.com") {
+      // Permiso libre y flexible para admin (mayúsculas o minúsculas)
+      if ((nombreInput === "jonatan ribot" && emailInput === "proferibotmusic@hotmail.com") || pin === "slermaster" || pin === "admin-sler" || pin === "sler-pro-2026") {
         usuarioPremium = true;
-        alert("Acceso de desarrollador reconocido. Bienvenido, Jonatan.");
-        document.getElementById('pantalla-login').classList.add('hidden-screen');
-        document.getElementById('modal-pago').classList.add('hidden-screen');
-        return;
-      } else if (pin === "SLER-PRO-2026" || pin === "ADMIN-SLER") {
-        usuarioPremium = true;
-        alert("¡PIN válido! Acceso completo desbloqueado.");
+        maxEjercicioAlcanzado = 88;
+        alert("Acceso de administrador reconocido. Movimiento libre habilitado.");
         document.getElementById('pantalla-login').classList.add('hidden-screen');
         document.getElementById('modal-pago').classList.add('hidden-screen');
         return;
       }
 
+      usuarioPremium = false;
+      alert("Acceso en Modo Freemium establecido correctamente.");
       document.getElementById('pantalla-login').classList.add('hidden-screen');
     };
 
@@ -283,6 +281,7 @@
       if(!email) {
         document.getElementById('login-email').value = "invitado@sler.app";
       }
+      usuarioPremium = false;
       document.getElementById('pantalla-login').classList.add('hidden-screen');
     };
 
@@ -315,29 +314,21 @@
       const nombrePago = document.getElementById('pago-nombre').value.trim().toLowerCase().replace(/\s+/g, ' ');
       const emailPago = document.getElementById('pago-email').value.trim().toLowerCase();
 
-      // Validación como desarrollador directo desde el modal de pago
-      if ((nombrePago === "jonatan ribot" && emailPago === "proferibotmusic@hotmail.com") || inputTexto === "slermaster" || inputTexto === "admin-sler") {
+      if ((nombrePago === "jonatan ribot" && emailPago === "proferibotmusic@hotmail.com") || inputTexto === "slermaster" || inputTexto === "admin-sler" || inputTexto === "sler-pro-2026") {
         usuarioPremium = true;
-        alert("¡Acceso de desarrollador acreditado desde el módulo de pago!");
+        maxEjercicioAlcanzado = 88;
+        alert("¡Licencia y acceso completo acreditados!");
         document.getElementById('modal-pago').classList.add('hidden-screen');
         window.iniciarNivel(nivelSeleccionado);
         return;
       }
 
-      // Validación por PIN de Mercado Pago tradicional
-      if(inputTexto === "sler-pro-2026" || inputTexto === "sler-pass") {
-        usuarioPremium = true;
-        alert("¡Licencia activada con éxito!");
-        document.getElementById('modal-pago').classList.add('hidden-screen');
-        window.iniciarNivel(nivelSeleccionado);
-      } else {
-        alert("PIN incorrecto. Verifica el código enviado y reintenta.");
-      }
+      alert("PIN incorrecto. Verifica el código enviado y reintenta.");
     };
 
     window.cerrarModalPago = function() {
       document.getElementById('modal-pago').classList.add('hidden-screen');
-      window.iniciarNivel(2);
+      window.irABienvenida();
     };
 
     window.cambiarPantalla = function(idMostrar) {
@@ -357,10 +348,20 @@
 
     window.saltarATanda = function(tanda) {
       const ejInicio = inicioPorTanda[tanda] || 1;
+      
+      // Control de acceso para usuario free si intenta saltar a nivel 3 o superior (ejercicio 52 en adelante)
       if (ejInicio >= 52 && !usuarioPremium) {
         document.getElementById('modal-pago').classList.remove('hidden-screen');
         return;
       }
+      
+      // Control de secuencialidad estricta para usuarios free
+      if (!usuarioPremium && ejInicio > maxEjercicioAlcanzado) {
+        alert(`Debes avanzar de forma secuencial. Tu ejercicio máximo habilitado actual es el ${maxEjercicioAlcanzado}.`);
+        window.seleccionarEjercicioGlobal(maxEjercicioAlcanzado);
+        return;
+      }
+
       window.seleccionarEjercicioGlobal(ejInicio);
     };
 
@@ -395,6 +396,10 @@
       else if (nivelSeleccionado === 3) ejInicio = 52;
       else if (nivelSeleccionado === 4) ejInicio = 72;
       else if (nivelSeleccionado === 5) ejInicio = 88;
+
+      if (!usuarioPremium && ejInicio > maxEjercicioAlcanzado) {
+        ejInicio = maxEjercicioAlcanzado;
+      }
 
       window.cambiarPantalla('pantalla-ejercicio');
       inicializarDropdowns();
@@ -451,9 +456,18 @@
 
     window.seleccionarEjercicioGlobal = function(val) {
       const numEj = parseInt(val);
+      
+      // Restricción para niveles de pago
       if (numEj >= 52 && !usuarioPremium) {
-        document.getElementById('modal-pago').classList.add('hidden-screen');
         document.getElementById('modal-pago').classList.remove('hidden-screen');
+        return;
+      }
+
+      // Restricción de avance secuencial estricto para usuarios free
+      if (!usuarioPremium && numEj > maxEjercicioAlcanzado) {
+        alert(`Debes avanzar de forma secuencial. No puedes saltar al ejercicio ${numEj} sin completar los anteriores.`);
+        const selectEj = document.getElementById('select-ejercicio-global');
+        if (selectEj) selectEj.value = ejAct;
         return;
       }
 
@@ -468,13 +482,6 @@
       disparoFirestore();
     };
 
-    window.mostrarPantallaFinal = function() {
-      document.getElementById('stat-ejercicios').innerText = `${ejerciciosContabilizados > 0 ? ejerciciosContabilizados : (usuarioPremium ? '88' : '51')} / 88`;
-      const relojPrincipal = document.getElementById('reloj');
-      document.getElementById('stat-tiempo').innerText = relojPrincipal ? relojPrincipal.innerText : "00:00:00";
-      window.cambiarPantalla('pantalla-final');
-    };
-
     let marcasHistorial = [];
 
     window.registrarMarcaEnTabla = function() {
@@ -486,7 +493,10 @@
         tiempo: tiempoActual
       });
 
-      ejerciciosContabilizados = Math.max(ejerciciosContabilizados, ejAct);
+      // Actualizar el tope secuencial alcanzado solo si el usuario avanza de forma progresiva
+      if (ejAct >= maxEjercicioAlcanzado && ejAct < 88) {
+        maxEjercicioAlcanzado = ejAct + 1;
+      }
 
       const contenedorLista = document.getElementById('lista-marcas');
       if (contenedorLista) {
@@ -499,6 +509,13 @@
         
         contenedorLista.scrollTop = contenedorLista.scrollHeight;
       }
+    };
+
+    window.mostrarPantallaFinal = function() {
+      document.getElementById('stat-ejercicios').innerText = `${marcasHistorial.length} / 88`;
+      const relojPrincipal = document.getElementById('reloj');
+      document.getElementById('stat-tiempo').innerText = relojPrincipal ? relojPrincipal.innerText : "00:00:00";
+      window.cambiarPantalla('pantalla-final');
     };
   </script>
 </body>

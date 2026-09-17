@@ -295,24 +295,13 @@ async function ejecutarTaquistoscopio() {
     else if (cantidadLineas >= 4) sizeClass = "text-lg leading-normal";
     else if (cantidadLineas >= 2) sizeClass = "text-2xl leading-relaxed";
 
-    const esExcepcion = (ejercicioActivoNum === 86 || ejercicioActivoNum === 87);
+    const htmlLineas = lineas.map((linea, index) => {
+      const esPar = index % 2 === 1;
+      const color = esPar ? "#dc2626" : "#1e40af";
+      return `<div style="color: ${color};">${linea}</div>`;
+    }).join("");
 
-    let htmlLineas = "";
-    if (esExcepcion) {
-      htmlLineas = lineas.map((linea) => {
-        return `<div style="text-align: left; width: 100%;">${linea}</div>`;
-      }).join("");
-    } else {
-      htmlLineas = lineas.map((linea, index) => {
-        const esPar = index % 2 === 1;
-        const color = esPar ? "#dc2626" : "#1e40af";
-        return `<div style="color: ${color};">${linea}</div>`;
-      }).join("");
-    }
-
-    display.className = esExcepcion
-      ? `${sizeClass} font-bold whitespace-pre-line w-full flex flex-col items-start justify-center`
-      : `${sizeClass} font-bold whitespace-pre-line text-center w-full flex flex-col items-center justify-center`;
+    display.className = `${sizeClass} font-bold whitespace-pre-line text-center w-full flex flex-col items-center justify-center`;
     display.innerHTML = htmlLineas;
   }
 }

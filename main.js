@@ -145,8 +145,15 @@ export async function manejarDisparo() {
       }
     }
   } else {
-    // --- ACUMULAR TIEMPO REAL DE VUELO ---
+    // --- VALIDACIÓN DE TIEMPO MÍNIMO (3 SEGUNDOS) ---
     const tiempoTranscurridoMs = Date.now() - tiempoInicioMs;
+    if (tiempoTranscurridoMs < 3000) {
+      alert("¡Espera un momento! Debes pasar al menos 3 segundos en este ejercicio antes de detenerlo.");
+      return;
+    }
+    // -----------------------------------------------
+
+    // --- ACUMULAR TIEMPO REAL DE VUELO ---
     let tiempoTotalMs = parseInt(localStorage.getItem("sler_tiempo_total_ms") || "0");
     tiempoTotalMs += tiempoTranscurridoMs;
     localStorage.setItem("sler_tiempo_total_ms", tiempoTotalMs);
@@ -508,13 +515,13 @@ function mostrarPantallaFinalLocal() {
 
         <!-- Enlaces recordatorios -->
         <div class="flex flex-wrap justify-center gap-4 mb-8">
-          <a href="https://www.amazon.com" target="_blank" rel="noopener noreferrer" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
+          <a href="https://www.amazon.com/dp/B0DW5CLB55" target="_blank" rel="noopener noreferrer" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
             📖 Ver Libro (Amazon)
           </a>
-          <a href="mailto:contacto@sler.com" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
-            ✉️ Enviar Correo
+          <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20SLER" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
+            ✉️ Correo de Soporte
           </a>
-          <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
+          <a href="https://microsoftedge.microsoft.com/addons/detail/sler-sistema-de-lectura/hjpliphbgbmmpeffohbnknjhfpipnfk" target="_blank" rel="noopener noreferrer" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
             🌐 Abrir Navegador (App)
           </a>
         </div>

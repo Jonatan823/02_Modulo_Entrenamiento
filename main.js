@@ -14,7 +14,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Inicialización limpia con caché moderna
 export const db = initializeFirestore(app, {
   localCache: persistentLocalCache({
     tabManager: persistentMultipleTabManager()
@@ -29,11 +28,8 @@ let cronometro = null;
 let globalPID = 0;
 const MAX_CARACTERES = 100;
 
-// --- CONFIGURACIÓN DE LOGIN PREVIO ---
-const PIN_CODIGO_VALIDO = "SLER2026"; // Código maestro de prueba
-
-// --- GESTIÓN DE TIEMPOS Y ACCESOS ---
-const ES_MODO_DEV = true; // Cambiar a 'false' para producción (activa candado de 3 días y expiración de 7 días)
+const PIN_CODIGO_VALIDO = "SLER2026";
+const ES_MODO_DEV = true;
 
 function obtenerDiaCurso() {
   let fechaInicio = localStorage.getItem("sler_fecha_inicio");
@@ -51,13 +47,11 @@ function verificarAcceso(numEj) {
 
   const diaActual = obtenerDiaCurso();
 
-  // Bloqueo total tras 7 días
   if (diaActual > 7) {
     alert("Tu periodo de acceso de 7 días al curso ha finalizado.");
     return false;
   }
 
-  // Restricciones por día
   if (numEj >= 52 && numEj <= 71 && diaActual < 2) {
     alert("¡Excelente trabajo en el Día 1! Para dar descanso a tu vista, el entrenamiento continúa mañana. Tu acceso al Nivel 3 se activará en 24 horas.");
     return false;
@@ -88,7 +82,6 @@ export async function cargarEjercicio(numEj) {
 
   try {
     const docRef = doc(db, "ejercicios", `ej_${ejercicioActivoNum}`);
-    // Añadimos control de tiempo de espera (timeout) para que no quede congelado si la red falla
     const docSnap = await Promise.race([
       getDoc(docRef),
       new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout de red")), 6000))
@@ -152,6 +145,13 @@ export async function manejarDisparo() {
       }
     }
   } else {
+    // --- ACUMULAR TIEMPO REAL DE VUELO ---
+    const tiempoTranscurridoMs = Date.now() - tiempoInicioMs;
+    let tiempoTotalMs = parseInt(localStorage.getItem("sler_tiempo_total_ms") || "0");
+    tiempoTotalMs += tiempoTranscurridoMs;
+    localStorage.setItem("sler_tiempo_total_ms", tiempoTotalMs);
+    // -------------------------------------
+
     sonarCampanaFin();
     if (typeof window.registrarMarcaEnTabla === "function") window.registrarMarcaEnTabla();
     resetEstadoUI();
@@ -168,7 +168,11 @@ export async function manejarDisparo() {
         }
       }
     } else {
-      if (typeof window.mostrarPantallaFinal === "function") window.mostrarPantallaFinal();
+      if (typeof window.mostrarPantallaFinal === "function") {
+        window.mostrarPantallaFinal();
+      } else {
+        mostrarPantallaFinalLocal();
+      }
     }
   }
 }
@@ -235,10 +239,10 @@ function tocarFanfarriaFestejo() {
   
   const ctx = new AudioContext();
   const notas = [
-    { freq: 523.25, dur: 0.15 }, // Do
-    { freq: 523.25, dur: 0.10 }, // Do
-    { freq: 659.25, dur: 0.10 }, // Mi
-    { freq: 783.99, dur: 0.40 }  // Sol
+    { freq: 523.25, dur: 0.15 },
+    { freq: 523.25, dur: 0.10 },
+    { freq: 659.25, dur: 0.10 },
+    { freq: 783.99, dur: 0.40 }
   ];
 
   let tiempoInicio = ctx.currentTime;
@@ -423,8 +427,6 @@ function actualizarEncabezadoUI(texto) {
   if (label) label.innerText = texto;
 }
 
-// --- FUNCIONES DE CONTROL DE ACCESO Y LOGIN ---
-
 window.validarAccesoPin = function() {
   const emailInput = document.getElementById("login-email")?.value.trim();
   const pinInput = document.getElementById("login-pin")?.value.trim();
@@ -450,20 +452,15 @@ window.validarAccesoPin = function() {
 };
 
 function verificarSesionPrevia() {
-  console.log("--- VERIFICANDO SESIÓN ---");
   const accesoConcedido = localStorage.getItem("sler_acceso_concedido");
   const estaValidado = localStorage.getItem("sler_usuario_validado");
-  console.log("Valores en localStorage:", { accesoConcedido, estaValidado });
 
   if (accesoConcedido === "true" || estaValidado === "true") {
-    console.log("Sesión previa detectada. Ocultando login y cargando ej. 1...");
     ocultarPantallaLogin();
     if (!localStorage.getItem("sler_fecha_inicio")) {
       localStorage.setItem("sler_fecha_inicio", new Date().getTime());
     }
     cargarEjercicio(1);
-  } else {
-    console.log("No hay sesión previa. Mostrando pantalla de login.");
   }
 }
 
@@ -471,6 +468,71 @@ function ocultarPantallaLogin() {
   const loginModal = document.getElementById("pantalla-login");
   if (loginModal) loginModal.classList.add("hidden");
 }
+
+function formatearTiempo(ms) {
+  const totalSegundos = Math.floor(ms / 1000);
+  const h = Math.floor(totalSegundos / 3600);
+  const m = Math.floor((totalSegundos % 3600) / 60);
+  const s = totalSegundos % 60;
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+function mostrarPantallaFinalLocal() {
+  const tiempoTotalMs = parseInt(localStorage.getItem("sler_tiempo_total_ms") || "0");
+  const tiempoFormateado = formatearTiempo(tiempoTotalMs);
+  
+  const render = document.getElementById("render");
+  const placeholder = document.getElementById("placeholder");
+  const display = document.getElementById("display-sler");
+
+  if (display) display.classList.add("hidden");
+  if (placeholder) placeholder.classList.add("hidden");
+  
+  if (render) {
+    render.classList.remove("hidden");
+    render.innerHTML = `
+      <div class="flex flex-col items-center justify-center p-6 text-slate-100 w-full h-full">
+        <h2 class="text-3xl font-black text-amber-400 mb-6 uppercase tracking-wider">RESUMEN DE LOGROS ALCANZADOS</h2>
+        
+        <div class="bg-slate-900 border border-slate-700 rounded-xl p-6 flex gap-12 mb-8 shadow-2xl">
+          <div class="text-center">
+            <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Ejercicios Completados</p>
+            <p class="text-4xl font-black text-white">88 / 88</p>
+          </div>
+          <div class="border-r border-slate-800"></div>
+          <div class="text-center">
+            <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Tiempo Total ("Horas de Vuelo")</p>
+            <p class="text-4xl font-black text-emerald-400">${tiempoFormateado}</p>
+          </div>
+        </div>
+
+        <!-- Enlaces recordatorios -->
+        <div class="flex flex-wrap justify-center gap-4 mb-8">
+          <a href="https://www.amazon.com" target="_blank" rel="noopener noreferrer" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
+            📖 Ver Libro (Amazon)
+          </a>
+          <a href="mailto:contacto@sler.com" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
+            ✉️ Enviar Correo
+          </a>
+          <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
+            🌐 Abrir Navegador (App)
+          </a>
+        </div>
+
+        <button onclick="reiniciarEntrenamiento()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-6 py-3 rounded-lg shadow-xl uppercase tracking-wider transition transform active:scale-95">
+          Reiniciar Entrenamiento
+        </button>
+      </div>
+    `;
+  }
+}
+
+window.mostrarPantallaFinal = window.mostrarPantallaFinal || mostrarPantallaFinalLocal;
+
+window.reiniciarEntrenamiento = function() {
+  localStorage.removeItem("sler_tiempo_total_ms");
+  cargarEjercicio(1);
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   verificarSesionPrevia();

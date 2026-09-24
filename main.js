@@ -1,12 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { PacingControl } from "./pacing.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1VUXm-OtZE30X4Ugv06VYUKY7RcneKDg",
   authDomain: "sler-chat-lab.firebaseapp.com",
   databaseURL: "https://sler-chat-lab-default-rtdb.firebaseio.com",
   projectId: "sler-chat-lab",
-  storageBucket: "sler-chat-lab.firebasestorage.app",
+  storageBucket: "sler-chat-lab.appspot.com",
   messagingSenderId: "594954603335",
   appId: "1:594954603335:web:02f0183659d8c752521a62",
   measurementId: "G-X4Z6HLBF2H"
@@ -27,41 +28,19 @@ let tiempoInicioMs = 0;
 let cronometro = null;
 let globalPID = 0;
 const MAX_CARACTERES = 100;
-
-const PIN_CODIGO_VALIDO = "SLER2026";
 const ES_MODO_DEV = true;
-
-function obtenerDiaCurso() {
-  let fechaInicio = localStorage.getItem("sler_fecha_inicio");
-  if (!fechaInicio) {
-    fechaInicio = new Date().getTime();
-    localStorage.setItem("sler_fecha_inicio", fechaInicio);
-  }
-  const diffMs = new Date().getTime() - parseInt(fechaInicio);
-  const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  return diffDias + 1;
-}
 
 function verificarAcceso(numEj) {
   if (ES_MODO_DEV) return true;
 
-  const diaActual = obtenerDiaCurso();
+  let tandaObj = Math.ceil(numEj / 10);
+  if (numEj === 88) tandaObj = 10;
 
-  if (diaActual > 7) {
-    alert("Tu periodo de acceso de 7 días al curso ha finalizado.");
+  const resultadoPacing = PacingControl.validarAcceso(tandaObj, numEj);
+  if (!resultadoPacing.permitido) {
+    alert(resultadoPacing.mensaje);
     return false;
   }
-
-  if (numEj >= 52 && numEj <= 71 && diaActual < 2) {
-    alert("¡Excelente trabajo en el Día 1! Para dar descanso a tu vista, el entrenamiento continúa mañana. Tu acceso al Nivel 3 se activará en 24 horas.");
-    return false;
-  }
-
-  if (numEj >= 72 && diaActual < 3) {
-    alert("¡Sesión del Día 2 completada! Deja reposar la práctica por hoy. En 24 horas podrás acceder a los Niveles 4 y 5.");
-    return false;
-  }
-
   return true;
 }
 
@@ -145,19 +124,15 @@ export async function manejarDisparo() {
       }
     }
   } else {
-    // --- VALIDACIÓN DE TIEMPO MÍNIMO (3 SEGUNDOS) ---
     const tiempoTranscurridoMs = Date.now() - tiempoInicioMs;
     if (tiempoTranscurridoMs < 3000) {
       alert("¡Espera un momento! Debes pasar al menos 3 segundos en este ejercicio antes de detenerlo.");
       return;
     }
-    // -----------------------------------------------
 
-    // --- ACUMULAR TIEMPO REAL DE VUELO ---
     let tiempoTotalMs = parseInt(localStorage.getItem("sler_tiempo_total_ms") || "0");
     tiempoTotalMs += tiempoTranscurridoMs;
     localStorage.setItem("sler_tiempo_total_ms", tiempoTotalMs);
-    // -------------------------------------
 
     sonarCampanaFin();
     if (typeof window.registrarMarcaEnTabla === "function") window.registrarMarcaEnTabla();
@@ -214,27 +189,19 @@ function LanzarNotificacionTanda(numEj) {
   setTimeout(() => {
     switch (numEj) {
       case 11:
-        alert("¡Primera tanda completada!\n\nHas superado la fase introductoria silábica. Las siguientes tandas pasarán a lecturas con palabras completas para acelerar tu agilidad visual.");
+        alert("¡Primera tanda completada!\n\nHas superado la fase introductoria silábica.");
         break;
       case 21:
-        alert("¡Nivel 1 Superado!\n\nTus ojos han completado la fase de adaptación básica. Entrando al Nivel 2: Barrido dinámico.");
-        break;
-      case 31:
-      case 41:
-        alert("Tanda completada.\n\nRecuerda leer el texto en voz alta antes de presionar el botón DETENER.");
+        alert("¡Nivel 1 Superado!\n\nEntrando al Nivel 2: Barrido dinámico.");
         break;
       case 51:
-        alert("¡Felicitaciones!\n\nHas completado el Nivel Elemental (50% del programa). Tu velocidad de lectura ha subido un escalón.");
+        alert("¡Felicitaciones!\n\nHas completado el Nivel Elemental.");
         break;
       case 52:
-        alert("¡Aquí empieza lo bueno!\n\nAhora vamos en serio: entras a la lectura bidireccional real. Presta máxima atención y deja que el flujo continuo entrene tu mirada.");
-        break;
-      case 71:
-      case 87:
-        alert("Entrando en fase de alta densidad.\n\nAbsorción de texto completo en flujo recíproco.");
+        alert("¡Aquí empieza lo buena lectura bidireccional real!");
         break;
       case 88:
-        alert("¡Entrenamiento Completado!\n\nHas alcanzado el máximo rendimiento del programa SLER. Recuerda que tendrás acceso abierto a la plataforma durante los próximos 7 días.");
+        alert("¡Entrenamiento Completado!");
         break;
     }
   }, 300);
@@ -434,56 +401,6 @@ function actualizarEncabezadoUI(texto) {
   if (label) label.innerText = texto;
 }
 
-window.validarAccesoPin = function() {
-  const emailInput = document.getElementById("login-email")?.value.trim();
-  const pinInput = document.getElementById("login-pin")?.value.trim();
-
-  if (!emailInput || !pinInput) {
-    alert("Por favor completa tu correo y el código de acceso.");
-    return;
-  }
-
-  if (pinInput === PIN_CODIGO_VALIDO) {
-    localStorage.setItem("sler_usuario_validado", "true");
-    localStorage.setItem("sler_usuario_email", emailInput);
-    
-    if (!localStorage.getItem("sler_fecha_inicio")) {
-      localStorage.setItem("sler_fecha_inicio", new Date().getTime());
-    }
-
-    ocultarPantallaLogin();
-    cargarEjercicio(1);
-  } else {
-    alert("Código de acceso incorrecto. Verifique el mail recibido.");
-  }
-};
-
-function verificarSesionPrevia() {
-  const accesoConcedido = localStorage.getItem("sler_acceso_concedido");
-  const estaValidado = localStorage.getItem("sler_usuario_validado");
-
-  if (accesoConcedido === "true" || estaValidado === "true") {
-    ocultarPantallaLogin();
-    if (!localStorage.getItem("sler_fecha_inicio")) {
-      localStorage.setItem("sler_fecha_inicio", new Date().getTime());
-    }
-    cargarEjercicio(1);
-  }
-}
-
-function ocultarPantallaLogin() {
-  const loginModal = document.getElementById("pantalla-login");
-  if (loginModal) loginModal.classList.add("hidden");
-}
-
-function formatearTiempo(ms) {
-  const totalSegundos = Math.floor(ms / 1000);
-  const h = Math.floor(totalSegundos / 3600);
-  const m = Math.floor((totalSegundos % 3600) / 60);
-  const s = totalSegundos % 60;
-  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-}
-
 function mostrarPantallaFinalLocal() {
   const tiempoTotalMs = parseInt(localStorage.getItem("sler_tiempo_total_ms") || "0");
   const tiempoFormateado = formatearTiempo(tiempoTotalMs);
@@ -513,16 +430,12 @@ function mostrarPantallaFinalLocal() {
           </div>
         </div>
 
-        <!-- Enlaces recordatorios -->
         <div class="flex flex-wrap justify-center gap-4 mb-8">
           <a href="https://www.amazon.com/dp/B0DW5CLB55" target="_blank" rel="noopener noreferrer" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
             📖 Ver Libro (Amazon)
           </a>
           <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20SLER" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
             ✉️ Correo de Soporte
-          </a>
-          <a href="https://microsoftedge.microsoft.com/addons/detail/sler-sistema-de-lectura/hjpliphbgbmmpeffohbnknjhfpipnfk" target="_blank" rel="noopener noreferrer" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
-            🌐 Abrir Navegador (App)
           </a>
         </div>
 
@@ -536,11 +449,10 @@ function mostrarPantallaFinalLocal() {
 
 window.mostrarPantallaFinal = window.mostrarPantallaFinal || mostrarPantallaFinalLocal;
 
-window.reiniciarEntrenamiento = function() {
-  localStorage.removeItem("sler_tiempo_total_ms");
-  cargarEjercicio(1);
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-  verificarSesionPrevia();
-});
+function formatearTiempo(ms) {
+  const totalSegundos = Math.floor(ms / 1000);
+  const h = Math.floor(totalSegundos / 3600);
+  const m = Math.floor((totalSegundos % 3600) / 60);
+  const s = totalSegundos % 60;
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}

@@ -1,6 +1,4 @@
 // pacing.js - Control de tiempos, límites y secuencia pedagógica por sesión
-import { db } from "./main.js";
-
 export const PacingControl = {
     obtenerEstado: function() {
         let inicio = localStorage.getItem('sler_pacing_inicio');
@@ -41,7 +39,6 @@ export const PacingControl = {
                         (typeof window !== 'undefined' && window.usuarioEsAdmin === true) ||
                         (typeof window !== 'undefined' && window.usuarioPremium === true);
 
-        // Regla 0: Secuencia obligatoria estricta para usuario no admin (vía sessionStorage)
         if (!esAdmin && numEjercicioObjetivo > 1) {
             const progreso = this.obtenerProgresoSesion();
             if (numEjercicioObjetivo > progreso.ejercicioMaximo + 1) {
@@ -55,10 +52,8 @@ export const PacingControl = {
         const estado = this.obtenerEstado();
         const dias = estado.dias;
 
-        // Regla 1: Plazo máximo global de 7 días
         if (dias > 7) {
             if (esAdmin) {
-                alert("[EFECTO FANTASMA] Simulación: Fin de plazo de 7 días (Admin con pase libre).");
                 return { permitido: true };
             }
             return { 
@@ -67,10 +62,8 @@ export const PacingControl = {
             };
         }
 
-        // Regla 2: Día 1 - Máximo 50% (Tandas 1 a 5 / Ejercicios 1 a 51)
         if (dias < 1 && tandaObjetivo > 5) {
             if (esAdmin) {
-                alert("[EFECTO FANTASMA] Simulación: Límite diario del 50% alcanzado (Tanda " + tandaObjetivo + "). Acceso concedido por rol admin.");
                 return { permitido: true };
             }
             return { 
@@ -79,10 +72,8 @@ export const PacingControl = {
             };
         }
 
-        // Regla 3: Tanda 10 reservada para el Día 3 en adelante (mínimo 48h transcurridas)
         if (tandaObjetivo === 10 && dias < 2) {
             if (esAdmin) {
-                alert("[EFECTO FANTASMA] Simulación: Tanda 10 requiere 3 días. Acceso concedido por rol admin.");
                 return { permitido: true };
             }
             return { 

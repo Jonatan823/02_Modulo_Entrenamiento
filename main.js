@@ -28,26 +28,55 @@ let tiempoInicioMs = 0;
 let cronometro = null;
 let globalPID = 0;
 const MAX_CARACTERES = 100;
-const ES_MODO_DEV = true;
+const ES_MODO_DEV = false; // Cambiado a false para respetar el control comercial en producción
 
-function verificarAcceso(numEj) {
+async function verificarAcceso(numEj) {
+  // Los primeros 51 ejercicios son libres y gratuitos
+  if (numEj <= 51) return true;
+
   if (ES_MODO_DEV) return true;
 
-  let tandaObj = Math.ceil(numEj / 10);
-  if (numEj === 88) tandaObj = 10;
+  // Verificamos si ya validó su PIN personal previamente en esta sesión/navegador
+  const licenciaAprobada = localStorage.getItem("sler_licencia_aprobada");
+  if (licenciaAprobada === "true") {
+    return true;
+  }
 
-  const resultadoPacing = PacingControl.validarAcceso(tandaObj, numEj);
-  if (!resultadoPacing.permitido) {
-    alert(resultadoPacing.mensaje);
+  // Si intenta pasar al 52 o superior sin licencia, pedimos el PIN personal y el correo
+  const emailUsuario = prompt("Has llegado a la versión Pro (Ejercicio 52 en adelante).\nIngresa tu correo electrónico registrado:");
+  if (!emailUsuario) return false;
+
+  const pinIngresado = prompt("Ingresa tu PIN de acceso personal recibido por correo:");
+  if (!pinIngresado) return false;
+
+  try {
+    // Consultamos la colección "licencias" en Firestore
+    const licRef = doc(db, "licencias", emailUsuario.trim().toLowerCase());
+    const licSnap = await getDoc(licRef);
+
+    if (licSnap.exists()) {
+      const datosLic = licSnap.data();
+      // Validamos que el estado esté aprobado y coincida el PIN personal
+      if (datosLic.estado === "aprobado" && datosLic.pin === pinIngresado.trim()) {
+        localStorage.setItem("sler_licencia_aprobada", "true");
+        alert("¡Licencia verificada con éxito! Acceso Pro desbloqueado.");
+        return true;
+      }
+    }
+    
+    alert("Acceso denegado: El PIN es incorrecto o la licencia aún no ha sido aprobada.");
+    return false;
+  } catch (error) {
+    console.error("Error al verificar la licencia en Firebase:", error);
+    alert("Error de conexión al validar la licencia. Inténtalo nuevamente.");
     return false;
   }
-  return true;
 }
 
 export async function cargarEjercicio(numEj) {
   const targetEj = parseInt(numEj);
 
-  if (!verificarAcceso(targetEj)) {
+  if (!(await verificarAcceso(targetEj))) {
     if (typeof window.seleccionarEjercicioGlobal === "function") {
       window.seleccionarEjercicioGlobal(ejercicioActivoNum);
     }
@@ -142,7 +171,7 @@ export async function manejarDisparo() {
 
     if (ejercicioActivoNum < 88) {
       const siguienteEj = ejercicioActivoNum + 1;
-      if (verificarAcceso(siguienteEj)) {
+      if (await verificarAcceso(siguienteEj)) {
         if (typeof window.seleccionarEjercicioGlobal === "function") {
           window.seleccionarEjercicioGlobal(siguienteEj);
         } else {
@@ -198,7 +227,7 @@ function LanzarNotificacionTanda(numEj) {
         alert("¡Felicitaciones!\n\nHas completado el Nivel Elemental.");
         break;
       case 52:
-        alert("¡Aquí empieza lo buena lectura bidireccional real!");
+        alert("¡Aquí empieza la lectura bidireccional real!");
         break;
       case 88:
         alert("¡Entrenamiento Completado!");
@@ -434,7 +463,7 @@ function mostrarPantallaFinalLocal() {
           <a href="https://www.amazon.com/dp/B0DW5CLB55" target="_blank" rel="noopener noreferrer" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
             📖 Ver Libro (Amazon)
           </a>
-          <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20SLER" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
+          <a href="mailto:proferibotmusic@hotmail.com?subject=Consulta%20SLER" class="bg-slate-700 hover:bg-slate-600 text-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
             ✉️ Correo de Soporte
           </a>
         </div>

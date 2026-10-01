@@ -434,8 +434,8 @@ function actualizarEncabezadoUI(texto) {
   if (label) label.innerText = texto;
 }
 
-window.validarAccesoPin = function() {
-  const emailInput = document.getElementById("login-email")?.value.trim();
+window.validarAccesoPin = async function() {
+  const emailInput = document.getElementById("login-email")?.value.trim().toLowerCase();
   const pinInput = document.getElementById("login-pin")?.value.trim();
 
   if (!emailInput || !pinInput) {
@@ -443,18 +443,32 @@ window.validarAccesoPin = function() {
     return;
   }
 
-  if (pinInput === PIN_CODIGO_VALIDO) {
-    localStorage.setItem("sler_usuario_validado", "true");
-    localStorage.setItem("sler_usuario_email", emailInput);
-    
-    if (!localStorage.getItem("sler_fecha_inicio")) {
-      localStorage.setItem("sler_fecha_inicio", new Date().getTime());
-    }
+  try {
+    const docRef = doc(db, "licencias", emailInput);
+    const docSnap = await getDoc(docRef);
 
-    ocultarPantallaLogin();
-    cargarEjercicio(1);
-  } else {
-    alert("Código de acceso incorrecto. Verifique el mail recibido.");
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      
+      if (data.pin === pinInput && data.estado === "aprobado") {
+        localStorage.setItem("sler_usuario_validado", "true");
+        localStorage.setItem("sler_usuario_email", emailInput);
+        
+        if (!localStorage.getItem("sler_fecha_inicio")) {
+          localStorage.setItem("sler_fecha_inicio", new Date().getTime());
+        }
+
+        ocultarPantallaLogin();
+        cargarEjercicio(1);
+      } else {
+        alert("PIN incorrecto o licencia pendiente de aprobación.");
+      }
+    } else {
+      alert("No se encontró una licencia registrada para este correo.");
+    }
+  } catch (error) {
+    console.error("Error al validar en Firestore:", error);
+    alert("Ocurrió un error al conectar con la base de datos.");
   }
 };
 

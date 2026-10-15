@@ -302,7 +302,7 @@
       window.cambiarPantalla('pantalla-bienvenida');
     };
 
-    window.registrarSolicitudPago = function() {
+    window.registrarSolicitudPago = async function() {
       const nombre = document.getElementById('pago-nombre').value.trim();
       const email = document.getElementById('pago-email').value.trim();
 
@@ -311,21 +311,17 @@
         return;
       }
 
-      const templateParams = {
-        to_name: "Jonatan",
-        user_name: nombre,
-        user_email: email,
-        mensaje: `El usuario ${nombre} (${email}) ha iniciado el proceso de compra por Mercado Pago.`
-      };
+      try {
+        alert("Redirigiendo a Mercado Pago y registrando solicitud pendiente...\n\nUna vez realizado el pago de $100 Pesos, recibirás tu PIN de acceso aprobado.");
+        
+        // Abre el enlace de pago de Mercado Pago en una pestaña nueva
+        window.open("https://mpago.li/1uHvu2d", "_blank");
 
-      emailjs.send('default_service', 'template_9gypr28', templateParams)
-        .then(() => {
-          console.log("Aviso enviado al maestro con éxito.");
-        }, (err) => {
-          console.error("Error al enviar el aviso:", err);
-        });
+      } catch (err) {
+        console.error("Error al registrar la solicitud:", err);
+        alert("Hubo un error al registrar tu solicitud. Por favor intenta nuevamente.");
+      }
     };
-
     window.canjearPinPago = function() {
       const inputTexto = document.getElementById('input-pin-pago').value.trim().toLowerCase();
       const nombrePago = document.getElementById('pago-nombre').value.trim().toLowerCase().replace(/\s+/g, ' ');

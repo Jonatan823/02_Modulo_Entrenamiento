@@ -1,0 +1,103 @@
+[debug] [2026-10-04T22:55:39.212Z] ----------------------------------------------------------------------
+[debug] [2026-10-04T22:55:39.227Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\profe\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2026-10-04T22:55:39.228Z] CLI Version:   15.31.0
+[debug] [2026-10-04T22:55:39.228Z] Platform:      win32
+[debug] [2026-10-04T22:55:39.228Z] Node Version:  v24.21.0
+[debug] [2026-10-04T22:55:39.228Z] Detected Agent: unknown
+[debug] [2026-10-04T22:55:39.228Z] Time:          Sun Oct 04 2026 19:55:39 GMT-0300 (hora estándar de Argentina)
+[debug] [2026-10-04T22:55:39.229Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-10-04T22:55:39.268Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-10-04T22:56:20.381Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-10-04T22:56:20.382Z] > authorizing via signed-in user (joniybenji1@gmail.com)
+[debug] [2026-10-04T22:56:20.382Z] [iam] checking project sler-chat-lab for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-10-04T22:56:20.385Z] Checked if tokens are valid: false, expires at: 1791129984353
+[debug] [2026-10-04T22:56:20.385Z] Checked if tokens are valid: false, expires at: 1791129984353
+[debug] [2026-10-04T22:56:20.385Z] > refreshing access token with scopes: []
+[debug] [2026-10-04T22:56:20.390Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-10-04T22:56:20.390Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-10-04T22:56:20.743Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-10-04T22:56:20.743Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-10-04T22:56:20.762Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/sler-chat-lab:testIamPermissions [none]
+[debug] [2026-10-04T22:56:20.762Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/sler-chat-lab:testIamPermissions  x-goog-user-project=sler-chat-lab
+[debug] [2026-10-04T22:56:20.763Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/sler-chat-lab:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-10-04T22:56:20.977Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-10-04T22:56:20.977Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-10-04T22:56:21.758Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/sler-chat-lab:testIamPermissions 200
+[debug] [2026-10-04T22:56:21.759Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/sler-chat-lab:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-10-04T22:56:21.760Z] Checked if tokens are valid: true, expires at: 1791158179743
+[debug] [2026-10-04T22:56:21.760Z] Checked if tokens are valid: true, expires at: 1791158179743
+[debug] [2026-10-04T22:56:21.760Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/sler-chat-lab/serviceAccounts/sler-chat-lab@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2026-10-04T22:56:21.761Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/sler-chat-lab/serviceAccounts/sler-chat-lab@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2026-10-04T22:56:22.768Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/sler-chat-lab/serviceAccounts/sler-chat-lab@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2026-10-04T22:56:22.769Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/sler-chat-lab/serviceAccounts/sler-chat-lab@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'sler-chat-lab'...
+[info] 
+[info] i  deploying functions 
+[debug] [2026-10-04T22:56:22.783Z] Checked if tokens are valid: true, expires at: 1791158179743
+[debug] [2026-10-04T22:56:22.783Z] Checked if tokens are valid: true, expires at: 1791158179743
+[debug] [2026-10-04T22:56:22.783Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/sler-chat-lab [none]
+[debug] [2026-10-04T22:56:23.028Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/sler-chat-lab 200
+[debug] [2026-10-04T22:56:23.028Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/sler-chat-lab {"projectNumber":"594954603335","projectId":"sler-chat-lab","lifecycleState":"ACTIVE","name":"SLER-App","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-02-01T12:42:19.906251Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2026-10-04T22:56:23.049Z] Checked if tokens are valid: true, expires at: 1791158179743
+[debug] [2026-10-04T22:56:23.049Z] Checked if tokens are valid: true, expires at: 1791158179743
+[debug] [2026-10-04T22:56:23.050Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/sler-chat-lab/adminSdkConfig [none]
+[debug] [2026-10-04T22:56:23.592Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/sler-chat-lab/adminSdkConfig 200
+[debug] [2026-10-04T22:56:23.592Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/sler-chat-lab/adminSdkConfig {"projectId":"sler-chat-lab","databaseURL":"https://sler-chat-lab-default-rtdb.firebaseio.com","storageBucket":"sler-chat-lab.firebasestorage.app"}
+[debug] [2026-10-04T22:56:23.610Z] Validating nodejs source
+[debug] [2026-10-04T22:56:33.670Z] checkFunctionsSDKVersion was unable to fetch information from NPM Error: spawnSync C:\WINDOWS\system32\cmd.exe ETIMEDOUT
+    at Object.spawnSync (node:internal/child_process:1160:20)
+    at Object.spawnSync (node:child_process:928:24)
+    at spawn.spawnSync [as sync] (C:\Users\profe\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\cross-spawn\index.js:26:23)
+    at Object.getLatestSDKVersion (C:\Users\profe\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\runtimes\node\versioning.js:57:25)
+    at Object.checkFunctionsSDKVersion (C:\Users\profe\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\runtimes\node\versioning.js:79:32)
+    at Delegate.validate (C:\Users\profe\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\runtimes\node\index.js:85:20)
+    at loadCodebases (C:\Users\profe\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\prepare.js:512:31)
+    at async prepare (C:\Users\profe\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\prepare.js:180:24)
+    at async chain (C:\Users\profe\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\index.js:114:9)
+    at async deploy (C:\Users\profe\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\index.js:193:9)
+[debug] [2026-10-04T22:56:33.672Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.20.0",
+    "firebase-admin": "^13.10.0",
+    "firebase-functions": "^7.4.0",
+    "nodemailer": "^10.0.13"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.4.1"
+  },
+  "private": true
+}
+[debug] [2026-10-04T22:56:33.673Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2026-10-04T22:56:33.714Z] Could not find functions.yaml. Must use http discovery
+[debug] [2026-10-04T22:56:33.816Z] Found firebase-functions binary at 'C:\Users\profe\Desktop\02_Modulo_Entrenamiento-main\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8198
+
+[debug] [2026-10-04T22:56:55.238Z] Error: Timed out.
+    at Timeout._onTimeout (C:\Users\profe\AppData\Roaming\npm\node_modules\firebase-tools\lib\utils.js:299:49)
+    at listOnTimeout (node:internal/timers:685:17)
+    at process.processTimers (node:internal/timers:618:7)
+[error] 
+[error] Error: An unexpected error has occurred.

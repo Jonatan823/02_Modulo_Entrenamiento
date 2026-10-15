@@ -310,15 +310,40 @@
       window.cambiarPantalla('pantalla-bienvenida');
     };
 
-    window.registrarSolicitudPago = function() {
+   window.registrarSolicitudPago = async function() {
       const nombre = document.getElementById('pago-nombre').value.trim();
       const email = document.getElementById('pago-email').value.trim();
 
-      if(!nombre || !email) {
-        alert("Por favor completa tu nombre y contacto antes de proceder.");
+      if (!nombre || !email) {
+        alert("Por favor completa tu nombre y email antes de proceder al pago.");
         return;
       }
-      console.log(`Solicitud registrada por: ${nombre} (${email})`);
+
+      try {
+        // Importamos Firestore de manera segura desde el cliente
+        const { getFirestore, doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        const { getApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
+        
+        const dbFirestore = getFirestore(getApp());
+        const emailKey = email.toLowerCase().trim();
+
+        // Escribimos la solicitud en Firestore para que te aparezca en el panel
+        await setDoc(doc(dbFirestore, "licencias", emailKey), {
+          nombre: nombre,
+          email: emailKey,
+          estado: "pendiente",
+          fechaSolicitud: new Date().toISOString()
+        }, { merge: true });
+
+        alert("¡Solicitud registrada con éxito en el sistema!\n\nSerás redirigido a Mercado Pago. Una vez acreditado, te aprobaremos el acceso.");
+        
+        // Abrimos Mercado Pago
+        window.open("https://mpago.li/1uHvu2d", "_blank");
+
+      } catch (err) {
+        console.error("Error al guardar la solicitud en Firestore:", err);
+        alert("Error al conectar con la base de datos. Verifica tu conexión e intenta nuevamente.");
+      }
     };
       
     window.canjearPinPago = async function() {
